@@ -17,7 +17,7 @@
 KOKKOS_INLINE_FUNCTION
 void CalculateContravariantFluxSRMHD(
     const parthenon::Real gamma,
-    const parthenon::Real prim[NPRIM], const int dir,
+    parthenon::Real prim[NPRIM], const int dir,
     parthenon::Real flux[NPRIM]) {
   State state;
   CalculateSRMHDState(prim, state);
@@ -38,7 +38,7 @@ void CalculateContravariantFluxSRMHD(
 KOKKOS_INLINE_FUNCTION
 void CalculateContravariantFluxGRMHD(
     const parthenon::Real gamma,
-    const parthenon::Real prim[NPRIM],
+    parthenon::Real prim[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     const parthenon::Real gdet, const int dir,
     parthenon::Real flux[NPRIM]) {

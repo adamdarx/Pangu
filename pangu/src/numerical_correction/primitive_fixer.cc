@@ -52,22 +52,19 @@ parthenon::TaskStatus FixPrimitiveSRMHD(
         const Real rho = primitive(RHO, k, j, i);
         const Real ug = primitive(ENY, k, j, i);
 
-        const Real primitive_array[NPRIM] = {
-            primitive(RHO, k, j, i), primitive(ENY, k, j, i),
-            primitive(UX1, k, j, i), primitive(UX2, k, j, i),
-            primitive(UX3, k, j, i), primitive(BX1, k, j, i),
-            primitive(BX2, k, j, i), primitive(BX3, k, j, i),
-        };
+        Real primitive_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_array[index] = primitive(index, k, j, i);
+        }
         State state;
         CalculateSRMHDState(primitive_array, state);
-        const Real bsq = Kokkos::max(dot4(state.bcon, state.bcov), 0.0);
 
         if (rho_floor < ug / sigma_max_safe) {
           rho_floor = ug / sigma_max_safe;
         }
-        const Real sigma = bsq / Kokkos::max(rho, small);
+        const Real sigma = state.bsq / Kokkos::max(rho, small);
         if (sigma > sigma_max) {
-          rho_floor = Kokkos::max(rho_floor, bsq / sigma_max_safe);
+          rho_floor = Kokkos::max(rho_floor, state.bsq / sigma_max_safe);
         }
 
         if (primitive(RHO, k, j, i) < rho_floor)
@@ -122,6 +119,8 @@ parthenon::TaskStatus FixPrimitiveGRMHD(
   auto covariant_metric = geom_resource->Get("covariant_metric").data;
   auto contravariant_metric = geom_resource->Get("contravariant_metric").data;
 
+  const Real umax2 = lorentz_max * lorentz_max - 1.0;
+
   pmb->par_for(
       PARTHENON_AUTO_LABEL, bound_x3_entire.s, bound_x3_entire.e, bound_x2_entire.s, bound_x2_entire.e,
       bound_x1_entire.s, bound_x1_entire.e,
@@ -145,22 +144,19 @@ parthenon::TaskStatus FixPrimitiveGRMHD(
 
         const Real rho = primitive(RHO, k, j, i);
         const Real ug = primitive(ENY, k, j, i);
-        const Real primitive_array[NPRIM] = {
-            primitive(RHO, k, j, i), primitive(ENY, k, j, i),
-            primitive(UX1, k, j, i), primitive(UX2, k, j, i),
-            primitive(UX3, k, j, i), primitive(BX1, k, j, i),
-            primitive(BX2, k, j, i), primitive(BX3, k, j, i),
-        };
+        Real primitive_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_array[index] = primitive(index, k, j, i);
+        }
         State state;
         CalculateGRMHDState(primitive_array, gcov, gcon, state);
-        const Real bsq = Kokkos::max(dot4(state.bcon, state.bcov), 0.0);
-
+        
         if (rho_floor < ug / sigma_max_safe) {
           rho_floor = ug / sigma_max_safe;
         }
-        const Real sigma = bsq / Kokkos::max(rho, small);
+        const Real sigma = state.bsq / rho;
         if (sigma > sigma_max) {
-          rho_floor = Kokkos::max(rho_floor, bsq / sigma_max_safe);
+          rho_floor = state.bsq / sigma_max_safe;
         }
 
         if (primitive(RHO, k, j, i) < rho_floor)
@@ -175,7 +171,6 @@ parthenon::TaskStatus FixPrimitiveGRMHD(
                           gcov[3][3] * u3 * u3 +
                           2.0 * (gcov[1][2] * u1 * u2 + gcov[1][3] * u1 * u3 +
                                  gcov[2][3] * u2 * u3);
-        const Real umax2 = lorentz_max * lorentz_max - 1.0;
         if (umax2 > 0.0 && uvsq > umax2) {
           const Real factor = Kokkos::sqrt(umax2 / Kokkos::max(uvsq, small));
           primitive(UX1, k, j, i) *= factor;

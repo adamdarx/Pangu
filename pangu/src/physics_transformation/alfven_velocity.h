@@ -16,15 +16,14 @@
 KOKKOS_INLINE_FUNCTION
 void CalculateAlfvenVelocitySRMHD(
     const parthenon::Real gamma,
-    const parthenon::Real prim[NPRIM], const int dir,
+    parthenon::Real prim[NPRIM], const int dir,
     parthenon::Real &v_max, parthenon::Real &v_min) {
   State state;
   CalculateSRMHDState(prim, state);
 
-  const auto b_sq = dot4(state.bcon, state.bcov);
   const auto h = prim[RHO] + gamma * prim[ENY];
-  const auto h_tot = b_sq + h;
-  const auto va_sq = b_sq / h_tot;
+  const auto h_tot = state.bsq + h;
+  const auto va_sq = state.bsq / h_tot;
   const auto cs_sq = gamma * (gamma - 1.) * prim[ENY] / h;
   auto cf_sq = cs_sq + va_sq - cs_sq * va_sq;
 
@@ -80,7 +79,7 @@ void CalculateAlfvenVelocitySRMHD(
 KOKKOS_INLINE_FUNCTION
 void CalculateAlfvenVelocityGRMHD(
     const parthenon::Real gamma,
-    const parthenon::Real prim[NPRIM],
+    parthenon::Real prim[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     const int dir, parthenon::Real &v_max, parthenon::Real &v_min) {
   parthenon::Real ncon[4] = {0., 0., 0., 0.};
@@ -103,8 +102,8 @@ void CalculateAlfvenVelocityGRMHD(
 
   const auto b_sq = dot4(state.bcon, state.bcov);
   const auto h = prim[RHO] + gamma * prim[ENY];
-  const auto h_tot = b_sq + h;
-  const auto va_sq = b_sq / h_tot;
+  const auto h_tot = state.bsq + h;
+  const auto va_sq = state.bsq / h_tot;
   const auto cs_sq = gamma * (gamma - 1.) * prim[ENY] / h;
   auto cf_sq = cs_sq + va_sq - cs_sq * va_sq;
 

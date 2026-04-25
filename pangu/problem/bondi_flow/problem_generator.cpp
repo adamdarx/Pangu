@@ -14,8 +14,6 @@
 #include "prolong_restrict/prolong_restrict.hpp"
 #include "task_list/task_list.h"
 
-namespace {
-
 KOKKOS_INLINE_FUNCTION
 parthenon::Real BondiTemperatureResidual(const parthenon::Real T,
                                          const parthenon::Real r,
@@ -99,8 +97,6 @@ void SolveBondiSolution(const parthenon::Real r, const parthenon::Real rs,
   u = rho * T * n;
   ur = -C1 / (Tn * r * r);
 }
-
-}  // namespace
 
 void ProblemGenerator(parthenon::MeshBlock *pmb,
                       parthenon::ParameterInput *pin) {
@@ -264,15 +260,15 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
           wvx3 = Gamma * beta3 / alpha;
         }
 
-        primitive(DensityIndex, k, j, i) =
+        primitive(RHO, k, j, i) =
             Kokkos::max(rho, kBondiAtmosphereFactor);
-        primitive(EnergyIndex, k, j, i) =
+        primitive(ENY, k, j, i) =
             Kokkos::max(eint, kBondiAtmosphereFactor * 1.0e-6);
-        primitive(WeightedVelocityX1, k, j, i) = wvx1;
-        primitive(WeightedVelocityX2, k, j, i) = wvx2;
-        primitive(WeightedVelocityX3, k, j, i) = wvx3;
-        primitive(MagneticFieldX1, k, j, i) = 0.0;
-        primitive(MagneticFieldX2, k, j, i) = 0.0;
-        primitive(MagneticFieldX3, k, j, i) = 0.0;
+        primitive(UX1, k, j, i) = wvx1;
+        primitive(UX2, k, j, i) = wvx2;
+        primitive(UX3, k, j, i) = wvx3;
+        primitive(BX1, k, j, i) = 0.0;
+        primitive(BX2, k, j, i) = 0.0;
+        primitive(BX3, k, j, i) = 0.0;
       });
 }

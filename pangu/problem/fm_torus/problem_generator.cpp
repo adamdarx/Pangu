@@ -320,14 +320,14 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
           }
         }
 
-        primitive(DensityIndex, k, j, i) = rho;
-        primitive(EnergyIndex, k, j, i) = eint;
-        primitive(WeightedVelocityX1, k, j, i) = wvx1;
-        primitive(WeightedVelocityX2, k, j, i) = wvx2;
-        primitive(WeightedVelocityX3, k, j, i) = wvx3;
-        primitive(MagneticFieldX1, k, j, i) = 0.0;
-        primitive(MagneticFieldX2, k, j, i) = 0.0;
-        primitive(MagneticFieldX3, k, j, i) = 0.0;
+        primitive(RHO, k, j, i) = rho;
+        primitive(ENY, k, j, i) = eint;
+        primitive(UX1, k, j, i) = wvx1;
+        primitive(UX2, k, j, i) = wvx2;
+        primitive(UX3, k, j, i) = wvx3;
+        primitive(BX1, k, j, i) = 0.0;
+        primitive(BX2, k, j, i) = 0.0;
+        primitive(BX3, k, j, i) = 0.0;
       });
 
   Real rhomax = 0.0;
@@ -337,14 +337,14 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s, jb.e, ib.s, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i, Real &local_rhomax) {
         local_rhomax =
-            Kokkos::max(local_rhomax, primitive(DensityIndex, k, j, i));
+            Kokkos::max(local_rhomax, primitive(RHO, k, j, i));
       },
       Kokkos::Max<Real>(rhomax));
 
   pmb->par_reduce(
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s, jb.e, ib.s, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i, Real &local_umax) {
-        local_umax = Kokkos::max(local_umax, primitive(EnergyIndex, k, j, i));
+        local_umax = Kokkos::max(local_umax, primitive(ENY, k, j, i));
       },
       Kokkos::Max<Real>(umax));
 
@@ -353,8 +353,8 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
   pmb->par_for(
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s, jb.e, ib.s, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        primitive(DensityIndex, k, j, i) /= rhomax;
-        primitive(EnergyIndex, k, j, i) /= rhomax;
+        primitive(RHO, k, j, i) /= rhomax;
+        primitive(ENY, k, j, i) /= rhomax;
       });
   umax /= rhomax;
 
@@ -373,10 +373,10 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s + 1, jb.e, ib.s + 1, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
         const Real rho_average =
-            0.25 * (primitive(DensityIndex, k, j, i) +
-                    primitive(DensityIndex, k, j, i - 1) +
-                    primitive(DensityIndex, k, j - 1, i) +
-                    primitive(DensityIndex, k, j - 1, i - 1));
+            0.25 * (primitive(RHO, k, j, i) +
+                    primitive(RHO, k, j, i - 1) +
+                    primitive(RHO, k, j - 1, i) +
+                    primitive(RHO, k, j - 1, i - 1));
         const Real expr = rho_average - aphi_rho_cut;
         vectorPotential(k - kb.s, j - jb.s, i - ib.s) =
             (expr > 0.0) ? expr : 0.0;
@@ -391,7 +391,7 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         const int ii = i - ib.s;
 
         const Real sqrt_abs_gdet = Kokkos::sqrt(
-            Kokkos::fabs(metric_determinant(MetricLocCenter, k, j, i)));
+            Kokkos::fabs(metric_determinant(CENTER, k, j, i)));
         const Real dx1 = coords.Dxc<X1DIR>(i);
         const Real dx2 = coords.Dxc<X2DIR>(j);
 
@@ -400,9 +400,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         const Real a10 = vectorPotential(kk, jj - 1, ii);
         const Real a11 = vectorPotential(kk, jj, ii);
 
-        primitive(MagneticFieldX1, k, j, i) =
+        primitive(BX1, k, j, i) =
             -(a00 - a01 + a10 - a11) / (2.0 * dx2 * sqrt_abs_gdet);
-        primitive(MagneticFieldX2, k, j, i) =
+        primitive(BX2, k, j, i) =
             (a00 + a01 - a10 - a11) / (2.0 * dx1 * sqrt_abs_gdet);
       });
 
@@ -417,28 +417,20 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         for (int row = 0; row < 4; ++row) {
           for (int col = 0; col < 4; ++col) {
             gcov[row][col] =
-                covariant_metric(MetricLocCenter, col, row, k, j, i);
+                covariant_metric(CENTER, col, row, k, j, i);
             gcon[row][col] =
-                contravariant_metric(MetricLocCenter, col, row, k, j, i);
+                contravariant_metric(CENTER, col, row, k, j, i);
           }
         }
 
-        const Real primitive_c_array[NPRIM] = {
-            primitive(DensityIndex, k, j, i),
-            primitive(EnergyIndex, k, j, i),
-            primitive(WeightedVelocityX1, k, j, i),
-            primitive(WeightedVelocityX2, k, j, i),
-            primitive(WeightedVelocityX3, k, j, i),
-            primitive(MagneticFieldX1, k, j, i),
-            primitive(MagneticFieldX2, k, j, i),
-            primitive(MagneticFieldX3, k, j, i),
-        };
+        Real primitive_c_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_c_array[index] = primitive(index, k, j, i);
+        }
 
-        State StateGRMHD;
-        CalculateGrmhdState(primitive_c_array, gcov, gcon, StateGRMHD);
-        const Real bsq = dot4(StateGRMHD.contravariant_magnetic_field,
-                              StateGRMHD.covariant_magnetic_field);
-        local_bsq_max = Kokkos::max(local_bsq_max, bsq);
+        State stateGRMHD;
+        CalculateGRMHDState(primitive_c_array, gcov, gcon, stateGRMHD);
+        local_bsq_max = Kokkos::max(local_bsq_max, stateGRMHD.bsq);
       },
       Kokkos::Max<Real>(bsq_max));
 
@@ -450,9 +442,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
       PARTHENON_AUTO_LABEL, kb_interior.s, kb_interior.e, jb_interior.s,
       jb_interior.e, ib_interior.s, ib_interior.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        primitive(MagneticFieldX1, k, j, i) *= magnetic_norm;
-        primitive(MagneticFieldX2, k, j, i) *= magnetic_norm;
-        primitive(MagneticFieldX3, k, j, i) *= magnetic_norm;
+        primitive(BX1, k, j, i) *= magnetic_norm;
+        primitive(BX2, k, j, i) *= magnetic_norm;
+        primitive(BX3, k, j, i) *= magnetic_norm;
       });
 
   printf("Maximum initial magnetic bsq: %e\n", bsq_max);

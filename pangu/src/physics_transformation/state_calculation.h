@@ -18,11 +18,12 @@ struct State {
   parthenon::Real ucov[4];
   parthenon::Real bcon[4];
   parthenon::Real bcov[4];
+  parthenon::Real bsq;
 };
 
 KOKKOS_INLINE_FUNCTION
 void CalculateSRMHDState(
-    const parthenon::Real primitive[NPRIM], State &state) {
+  parthenon::Real primitive[NPRIM], State &state) {
   const auto u_sq = Kokkos::pow(primitive[UX1], 2) +
                     Kokkos::pow(primitive[UX2], 2) +
                     Kokkos::pow(primitive[UX3], 2);
@@ -51,11 +52,12 @@ void CalculateSRMHDState(
   state.bcov[1] = state.bcon[1];
   state.bcov[2] = state.bcon[2];
   state.bcov[3] = state.bcon[3];
+  state.bsq = state.bcon[0] * state.bcov[0] + state.bcon[1] * state.bcov[1] + state.bcon[2] * state.bcov[2] + state.bcon[3] * state.bcov[3];
 }
 
 KOKKOS_INLINE_FUNCTION
 void CalculateGRMHDState(
-    const parthenon::Real primitive[NPRIM],
+    parthenon::Real primitive[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     State &state) {
   const auto alpha = 1.0 / Kokkos::sqrt(-gcon[0][0]);
@@ -101,6 +103,8 @@ void CalculateGRMHDState(
       state.bcov[row] += gcov[row][col] * state.bcon[col];
     }
   }
+
+  state.bsq = state.bcon[0] * state.bcov[0] + state.bcon[1] * state.bcov[1] + state.bcon[2] * state.bcov[2] + state.bcon[3] * state.bcov[3];
 }
 
 #endif  // PANGU_SRC_PHYSICSTRANSFORMATION_STATECALCULATION_H

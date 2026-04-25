@@ -68,12 +68,10 @@ parthenon::TaskStatus AddSourceGRMHD(
           }
         }
 
-        const Real primitive_c_array[NPRIM] = {
-            primitive(RHO, k, j, i), primitive(ENY, k, j, i),
-            primitive(UX1, k, j, i), primitive(UX2, k, j, i),
-            primitive(UX3, k, j, i), primitive(BX1, k, j, i),
-            primitive(BX2, k, j, i), primitive(BX3, k, j, i),
-        };
+        Real primitive_c_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_c_array[index] = primitive(index, k, j, i);
+        }
 
         Real MixedEnergyMomentumTensor[4][4];
         for (int row = 0; row < 4; ++row) {

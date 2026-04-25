@@ -47,12 +47,10 @@ parthenon::TaskStatus CalculateConservativeSRMHD(
       PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
       bound_x1_interior.s, bound_x1_interior.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        const Real primitive_c_array[NPRIM] = {
-            primitive(RHO, k, j, i), primitive(ENY, k, j, i),
-            primitive(UX1, k, j, i), primitive(UX2, k, j, i),
-            primitive(UX3, k, j, i), primitive(BX1, k, j, i),
-            primitive(BX2, k, j, i), primitive(BX3, k, j, i),
-        };
+        Real primitive_c_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_c_array[index] = primitive(index, k, j, i);
+        }
 
         Real ConservativeState[NPRIM];
         CalculateContravariantFluxSRMHD(kAdiabaticIndex, primitive_c_array, X0DIR,
@@ -112,12 +110,10 @@ parthenon::TaskStatus CalculateConservativeGRMHD(
           }
         }
 
-        const Real primitive_c_array[NPRIM] = {
-            primitive(RHO, k, j, i), primitive(ENY, k, j, i),
-            primitive(UX1, k, j, i), primitive(UX2, k, j, i),
-            primitive(UX3, k, j, i), primitive(BX1, k, j, i),
-            primitive(BX2, k, j, i), primitive(BX3, k, j, i),
-        };
+        Real primitive_c_array[NPRIM];
+        for (int index = 0; index < NPRIM; ++index) {
+          primitive_c_array[index] = primitive(index, k, j, i);
+        }
 
         Real conservative_c_array[NPRIM];
         CalculateContravariantFluxGRMHD(

@@ -39,7 +39,7 @@ ncycle_out_mesh = -10000
 <core>
 cfl_number = 0.4
 adiabatic_index = 1.666666667
-q_factor_floor = 1.0
+q_factor_floor = 0.5
 q_factor_ceiling = 1.0
 
 <metric>

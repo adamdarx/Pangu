@@ -35,20 +35,20 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s, jb.e, ib.s, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
         auto generator = random_pool.get_state();
-        primitive(DensityIndex, k, j, i) =
+        primitive(RHO, k, j, i) =
             1.0 * (Kokkos::abs(coords.Xc<X2DIR>(j)) > 0.25) +
             2.0 * (Kokkos::abs(coords.Xc<X2DIR>(j)) <= 0.25);
-        primitive(EnergyIndex, k, j, i) = 2.5 / (kAdiabaticIndex - 1);
-        primitive(WeightedVelocityX1, k, j, i) =
+        primitive(ENY, k, j, i) = 2.5 / (kAdiabaticIndex - 1);
+        primitive(UX1, k, j, i) =
             -0.5 * (Kokkos::abs(coords.Xc<X2DIR>(j)) > 0.25) +
             0.5 * (Kokkos::abs(coords.Xc<X2DIR>(j)) <= 0.25) +
             1e-2 * generator.drand(-1., 1.);
-        primitive(WeightedVelocityX2, k, j, i) =
+        primitive(UX2, k, j, i) =
             5e-2 * generator.drand(-1., 1.);
-        primitive(WeightedVelocityX3, k, j, i) = 0.;
-        primitive(MagneticFieldX1, k, j, i) = 0.5 * Kokkos::sqrt(4 * M_PI);
-        primitive(MagneticFieldX2, k, j, i) = 0.;
-        primitive(MagneticFieldX3, k, j, i) = 0.;
+        primitive(UX3, k, j, i) = 0.;
+        primitive(BX1, k, j, i) = 0.5 * Kokkos::sqrt(4 * M_PI);
+        primitive(BX2, k, j, i) = 0.;
+        primitive(BX3, k, j, i) = 0.;
         random_pool.free_state(generator);
       });
 }

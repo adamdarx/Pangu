@@ -17,5 +17,4 @@ parthenon::TaskStatus AddSourceGRMHD(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     parthenon::Real dt,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
-
 #endif  // PANGU_SRC_RIEMANNSOLVER_GEOMETRICSOURCETERM_H

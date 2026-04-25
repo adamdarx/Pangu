@@ -85,12 +85,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
                       bound_x1_interior.e + 1, [&](const int n, const int i) {
                         primitiveLeft(n, i) =
                             primitive(n, k, j, i - 1) +
-                            0.5 * InterpolateMc(primitive(n, k, j, i - 2),
+                            0.5 * InterpolateMC(primitive(n, k, j, i - 2),
                                                 primitive(n, k, j, i - 1),
                                                 primitive(n, k, j, i));
                         primitiveRight(n, i) =
                             primitive(n, k, j, i) -
-                            0.5 * InterpolateMc(primitive(n, k, j, i - 1),
+                            0.5 * InterpolateMC(primitive(n, k, j, i - 1),
                                                 primitive(n, k, j, i),
                                                 primitive(n, k, j, i + 1));
                       });
@@ -102,19 +102,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
           Real conservativeRight[NPRIM];
           Real fluxLeft[NPRIM];
           Real fluxRight[NPRIM];
-          const Real PrimitiveLeftCArray[NPRIM] = {
-              primitiveLeft(RHO, i), primitiveLeft(ENY, i),
-              primitiveLeft(UX1, i), primitiveLeft(UX2, i),
-              primitiveLeft(UX3, i), primitiveLeft(BX1, i),
-              primitiveLeft(BX2, i), primitiveLeft(BX3, i),
-          };
-          const Real PrimitiveRightCArray[NPRIM] = {
-              primitiveRight(RHO, i), primitiveRight(ENY, i),
-              primitiveRight(UX1, i), primitiveRight(UX2, i),
-              primitiveRight(UX3, i), primitiveRight(BX1, i),
-              primitiveRight(BX2, i), primitiveRight(BX3, i),
-          };
-          const auto *primitive_right = PrimitiveRightCArray;
+          Real PrimitiveLeftCArray[NPRIM];
+          Real PrimitiveRightCArray[NPRIM];
+          for (int index = 0; index < NPRIM; ++index) {
+            PrimitiveLeftCArray[index] = primitiveLeft(index, i);
+            PrimitiveRightCArray[index] = primitiveRight(index, i);
+          }
 
           Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
           Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
@@ -136,11 +129,11 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
 
           CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
                                           X0DIR, conservativeLeft);
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, primitive_right,
+          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveRightCArray,
                                           X0DIR, conservativeRight);
           CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
                                           X1DIR, fluxLeft);
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, primitive_right,
+          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveRightCArray,
                                           X1DIR, fluxRight);
 
           for (int index = 0; index < NPRIM; index++)
@@ -168,12 +161,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
                         bound_x2_interior.e + 1, [&](const int n, const int j) {
                           primitiveLeft(n, j) =
                               primitive(n, k, j - 1, i) +
-                              0.5 * InterpolateMc(primitive(n, k, j - 2, i),
+                              0.5 * InterpolateMC(primitive(n, k, j - 2, i),
                                                   primitive(n, k, j - 1, i),
                                                   primitive(n, k, j, i));
                           primitiveRight(n, j) =
                               primitive(n, k, j, i) -
-                              0.5 * InterpolateMc(primitive(n, k, j - 1, i),
+                              0.5 * InterpolateMC(primitive(n, k, j - 1, i),
                                                   primitive(n, k, j, i),
                                                   primitive(n, k, j + 1, i));
                         });
@@ -185,18 +178,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
             Real conservativeRight[NPRIM];
             Real fluxLeft[NPRIM];
             Real fluxRight[NPRIM];
-            const Real PrimitiveLeftCArray[NPRIM] = {
-                primitiveLeft(RHO, j), primitiveLeft(ENY, j),
-                primitiveLeft(UX1, j), primitiveLeft(UX2, j),
-                primitiveLeft(UX3, j), primitiveLeft(BX1, j),
-                primitiveLeft(BX2, j), primitiveLeft(BX3, j),
-            };
-            const Real PrimitiveRightCArray[NPRIM] = {
-                primitiveRight(RHO, j), primitiveRight(ENY, j),
-                primitiveRight(UX1, j), primitiveRight(UX2, j),
-                primitiveRight(UX3, j), primitiveRight(BX1, j),
-                primitiveRight(BX2, j), primitiveRight(BX3, j),
-            };
+            Real PrimitiveLeftCArray[NPRIM];
+            Real PrimitiveRightCArray[NPRIM];
+            for (int index = 0; index < NPRIM; ++index) {
+              PrimitiveLeftCArray[index] = primitiveLeft(index, j);
+              PrimitiveRightCArray[index] = primitiveRight(index, j);
+            }
 
             Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
             Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
@@ -250,12 +237,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
                         bound_x3_interior.e + 1, [&](const int n, const int k) {
                           primitiveLeft(n, k) =
                               primitive(n, k - 1, j, i) +
-                              0.5 * InterpolateMc(primitive(n, k - 2, j, i),
+                              0.5 * InterpolateMC(primitive(n, k - 2, j, i),
                                                   primitive(n, k - 1, j, i),
                                                   primitive(n, k, j, i));
                           primitiveRight(n, k) =
                               primitive(n, k, j, i) -
-                              0.5 * InterpolateMc(primitive(n, k - 1, j, i),
+                              0.5 * InterpolateMC(primitive(n, k - 1, j, i),
                                                   primitive(n, k, j, i),
                                                   primitive(n, k + 1, j, i));
                         });
@@ -267,18 +254,12 @@ parthenon::TaskStatus CalculateFluxesSRMHD(
             Real conservativeRight[NPRIM];
             Real fluxLeft[NPRIM];
             Real fluxRight[NPRIM];
-            const Real PrimitiveLeftCArray[NPRIM] = {
-                primitiveLeft(RHO, k), primitiveLeft(ENY, k),
-                primitiveLeft(UX1, k), primitiveLeft(UX2, k),
-                primitiveLeft(UX3, k), primitiveLeft(BX1, k),
-                primitiveLeft(BX2, k), primitiveLeft(BX3, k),
-            };
-            const Real PrimitiveRightCArray[NPRIM] = {
-                primitiveRight(RHO, k), primitiveRight(ENY, k),
-                primitiveRight(UX1, k), primitiveRight(UX2, k),
-                primitiveRight(UX3, k), primitiveRight(BX1, k),
-                primitiveRight(BX2, k), primitiveRight(BX3, k),
-            };
+            Real PrimitiveLeftCArray[NPRIM];
+            Real PrimitiveRightCArray[NPRIM];
+            for (int index = 0; index < NPRIM; ++index) {
+              PrimitiveLeftCArray[index] = primitiveLeft(index, k);
+              PrimitiveRightCArray[index] = primitiveRight(index, k);
+            }
 
             Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
             Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
@@ -390,12 +371,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
                       bound_x1_interior.e + 1, [&](const int n, const int i) {
                         primitiveLeft(n, i) =
                             primitive(n, k, j, i - 1) +
-                            0.5 * InterpolateMc(primitive(n, k, j, i - 2),
+                            0.5 * InterpolateMC(primitive(n, k, j, i - 2),
                                                 primitive(n, k, j, i - 1),
                                                 primitive(n, k, j, i));
                         primitiveRight(n, i) =
                             primitive(n, k, j, i) -
-                            0.5 * InterpolateMc(primitive(n, k, j, i - 1),
+                            0.5 * InterpolateMC(primitive(n, k, j, i - 1),
                                                 primitive(n, k, j, i),
                                                 primitive(n, k, j, i + 1));
                       });
@@ -408,18 +389,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
           Real fluxLeft[NPRIM];
           Real fluxRight[NPRIM];
 
-          const Real PrimitiveLeftCArray[NPRIM] = {
-              primitiveLeft(RHO, i), primitiveLeft(ENY, i),
-              primitiveLeft(UX1, i), primitiveLeft(UX2, i),
-              primitiveLeft(UX3, i), primitiveLeft(BX1, i),
-              primitiveLeft(BX2, i), primitiveLeft(BX3, i),
-          };
-          const Real PrimitiveRightCArray[NPRIM] = {
-              primitiveRight(RHO, i), primitiveRight(ENY, i),
-              primitiveRight(UX1, i), primitiveRight(UX2, i),
-              primitiveRight(UX3, i), primitiveRight(BX1, i),
-              primitiveRight(BX2, i), primitiveRight(BX3, i),
-          };
+          Real PrimitiveLeftCArray[NPRIM];
+          Real PrimitiveRightCArray[NPRIM];
+          for (int index = 0; index < NPRIM; ++index) {
+            PrimitiveLeftCArray[index] = primitiveLeft(index, i);
+            PrimitiveRightCArray[index] = primitiveRight(index, i);
+          }
 
           Real gcovFace[4][4], gconFace[4][4];
           for (int row = 0; row < 4; ++row) {
@@ -488,12 +463,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
                         bound_x2_interior.e + 1, [&](const int n, const int j) {
                           primitiveLeft(n, j) =
                               primitive(n, k, j - 1, i) +
-                              0.5 * InterpolateMc(primitive(n, k, j - 2, i),
+                              0.5 * InterpolateMC(primitive(n, k, j - 2, i),
                                                   primitive(n, k, j - 1, i),
                                                   primitive(n, k, j, i));
                           primitiveRight(n, j) =
                               primitive(n, k, j, i) -
-                              0.5 * InterpolateMc(primitive(n, k, j - 1, i),
+                              0.5 * InterpolateMC(primitive(n, k, j - 1, i),
                                                   primitive(n, k, j, i),
                                                   primitive(n, k, j + 1, i));
                         });
@@ -506,18 +481,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
             Real fluxLeft[NPRIM];
             Real fluxRight[NPRIM];
 
-            const Real PrimitiveLeftCArray[NPRIM] = {
-                primitiveLeft(RHO, j), primitiveLeft(ENY, j),
-                primitiveLeft(UX1, j), primitiveLeft(UX2, j),
-                primitiveLeft(UX3, j), primitiveLeft(BX1, j),
-                primitiveLeft(BX2, j), primitiveLeft(BX3, j),
-            };
-            const Real PrimitiveRightCArray[NPRIM] = {
-                primitiveRight(RHO, j), primitiveRight(ENY, j),
-                primitiveRight(UX1, j), primitiveRight(UX2, j),
-                primitiveRight(UX3, j), primitiveRight(BX1, j),
-                primitiveRight(BX2, j), primitiveRight(BX3, j),
-            };
+            Real PrimitiveLeftCArray[NPRIM];
+            Real PrimitiveRightCArray[NPRIM];
+            for (int index = 0; index < NPRIM; ++index) {
+              PrimitiveLeftCArray[index] = primitiveLeft(index, j);
+              PrimitiveRightCArray[index] = primitiveRight(index, j);
+            }
 
             Real gcovFace[4][4], gconFace[4][4];
             for (int row = 0; row < 4; ++row) {
@@ -586,12 +555,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
                         bound_x3_interior.e + 1, [&](const int n, const int k) {
                           primitiveLeft(n, k) =
                               primitive(n, k - 1, j, i) +
-                              0.5 * InterpolateMc(primitive(n, k - 2, j, i),
+                              0.5 * InterpolateMC(primitive(n, k - 2, j, i),
                                                   primitive(n, k - 1, j, i),
                                                   primitive(n, k, j, i));
                           primitiveRight(n, k) =
                               primitive(n, k, j, i) -
-                              0.5 * InterpolateMc(primitive(n, k - 1, j, i),
+                              0.5 * InterpolateMC(primitive(n, k - 1, j, i),
                                                   primitive(n, k, j, i),
                                                   primitive(n, k + 1, j, i));
                         });
@@ -604,18 +573,12 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
             Real fluxLeft[NPRIM];
             Real fluxRight[NPRIM];
 
-            const Real PrimitiveLeftCArray[NPRIM] = {
-                primitiveLeft(RHO, k), primitiveLeft(ENY, k),
-                primitiveLeft(UX1, k), primitiveLeft(UX2, k),
-                primitiveLeft(UX3, k), primitiveLeft(BX1, k),
-                primitiveLeft(BX2, k), primitiveLeft(BX3, k),
-            };
-            const Real PrimitiveRightCArray[NPRIM] = {
-                primitiveRight(RHO, k), primitiveRight(ENY, k),
-                primitiveRight(UX1, k), primitiveRight(UX2, k),
-                primitiveRight(UX3, k), primitiveRight(BX1, k),
-                primitiveRight(BX2, k), primitiveRight(BX3, k),
-            };
+            Real PrimitiveLeftCArray[NPRIM];
+            Real PrimitiveRightCArray[NPRIM];
+            for (int index = 0; index < NPRIM; ++index) {
+              PrimitiveLeftCArray[index] = primitiveLeft(index, k);
+              PrimitiveRightCArray[index] = primitiveRight(index, k);
+            }
 
             Real gcovFace[4][4], gconFace[4][4];
             for (int row = 0; row < 4; ++row) {

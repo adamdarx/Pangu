@@ -34,17 +34,17 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
   pmb->par_for(
       PARTHENON_AUTO_LABEL, kb.s, kb.e, jb.s, jb.e, ib.s, ib.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        primitive(DensityIndex, k, j, i) = 1.0;
-        primitive(EnergyIndex, k, j, i) = 10.0 / (kAdiabaticIndex - 1);
-        primitive(WeightedVelocityX1, k, j, i) =
+        primitive(RHO, k, j, i) = 1.0;
+        primitive(ENY, k, j, i) = 10.0 / (kAdiabaticIndex - 1);
+        primitive(UX1, k, j, i) =
             -LorentzFactor * Kokkos::sin(coords.Xc<X2DIR>(j));
-        primitive(WeightedVelocityX2, k, j, i) =
+        primitive(UX2, k, j, i) =
             LorentzFactor * Kokkos::sin(coords.Xc<X1DIR>(i));
-        primitive(WeightedVelocityX3, k, j, i) = 0.;
-        primitive(MagneticFieldX1, k, j, i) =
+        primitive(UX3, k, j, i) = 0.;
+        primitive(BX1, k, j, i) =
             -Kokkos::sin(coords.Xc<X2DIR>(j));
-        primitive(MagneticFieldX2, k, j, i) =
+        primitive(BX2, k, j, i) =
             Kokkos::sin(2 * coords.Xc<X1DIR>(i));
-        primitive(MagneticFieldX3, k, j, i) = 0.;
+        primitive(BX3, k, j, i) = 0.;
       });
 }

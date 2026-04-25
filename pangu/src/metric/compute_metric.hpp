@@ -7,8 +7,7 @@
 #include <parthenon/package.hpp>
 
 #include "../initialize/mnemonic.hpp"
-#include "kerr_metric.hpp"
-#include "schwarzschild_metric.hpp"
+#include "cartesian_kerr_schild.h"
 
 KOKKOS_INLINE_FUNCTION
 void ComputeMinkowskiMetric(parthenon::Real gcov[4][4],

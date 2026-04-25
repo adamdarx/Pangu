@@ -97,6 +97,7 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
   TaskRegion &async_region2 =
       tc.AddRegion(num_task_lists_executed_independently);
   assert(blocks.size() == async_region2.size());
+
   for (int i = 0; i < blocks.size(); i++) {
     auto &pmb = blocks[i];
     auto &tl = async_region2[i];
@@ -113,6 +114,7 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
   TaskRegion &async_region3 =
       tc.AddRegion(num_task_lists_executed_independently);
   assert(blocks.size() == async_region3.size());
+  
   for (int i = 0; i < blocks.size(); i++) {
     auto &pmb = blocks[i];
     auto &tl = async_region3[i];

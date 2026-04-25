@@ -14,13 +14,15 @@
 #include "initialization/variable_mnemonics.h"
 
 parthenon::TaskStatus TransformToSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
   // TODO:  An SRMHD Invertor is needed before this function can be implemented.
+  return parthenon::TaskStatus::complete;
 }
 
 parthenon::TaskStatus TransformToGRMHD(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
   // TODO:  An SRMHD Invertor is needed before this function can be implemented.
+  return parthenon::TaskStatus::complete;
 }

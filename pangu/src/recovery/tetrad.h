@@ -12,7 +12,7 @@
 
 // Recovers SRMHD primitive variables from conservative variables.
 parthenon::TaskStatus TransformToSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
 
 // Recovers GRMHD primitive variables from conservative and metric variables.

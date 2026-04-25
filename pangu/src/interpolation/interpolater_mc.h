@@ -11,7 +11,7 @@
 #include "basic_types.hpp"
 
 KOKKOS_INLINE_FUNCTION
-parthenon::Real InterpolateMc(const parthenon::Real left,
+parthenon::Real InterpolateMC(const parthenon::Real left,
                               const parthenon::Real center,
                               const parthenon::Real right) {
   const parthenon::Real forward_diff = 2. * (center - left);
