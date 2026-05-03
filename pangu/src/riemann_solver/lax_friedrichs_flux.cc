@@ -17,8 +17,8 @@
 #include "basic_types.hpp"
 #include "initialization/variable_mnemonics.h"
 #include "interpolation/interpolater_mc.h"
-#include "physics_transformation/alfven_velocity.h"
-#include "physics_transformation/contravariant_flux.h"
+#include "physics/alfven_velocity.h"
+#include "physics/contravariant_flux.h"
 
 parthenon::TaskStatus CalculateFluxesSRMHD(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {

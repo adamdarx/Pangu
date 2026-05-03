@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Yuehang Li.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-// This file in the src/physics_transformation module defines state_calculation.h
+// This file in the src/physics module defines state_calculation.h
 // responsibilities for the Pangu runtime. It centers on basic_types to express core data
 // flow, keep interfaces readable, and preserve predictable behavior across task
 // coordination, recovery paths, and performance-sensitive execution.
 
-#ifndef PANGU_SRC_PHYSICSTRANSFORMATION_STATECALCULATION_H
-#define PANGU_SRC_PHYSICSTRANSFORMATION_STATECALCULATION_H
+#ifndef PANGU_SRC_PHYSICS_STATECALCULATION_H
+#define PANGU_SRC_PHYSICS_STATECALCULATION_H
 
 #include "basic_types.hpp"
 #include "initialization/variable_mnemonics.h"
@@ -107,4 +107,4 @@ void CalculateGRMHDState(
   state.bsq = state.bcon[0] * state.bcov[0] + state.bcon[1] * state.bcov[1] + state.bcon[2] * state.bcov[2] + state.bcon[3] * state.bcov[3];
 }
 
-#endif  // PANGU_SRC_PHYSICSTRANSFORMATION_STATECALCULATION_H
+#endif  // PANGU_SRC_PHYSICS_STATECALCULATION_H

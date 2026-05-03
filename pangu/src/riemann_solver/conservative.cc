@@ -15,7 +15,7 @@
 
 #include "basic_types.hpp"
 #include "initialization/variable_mnemonics.h"
-#include "physics_transformation/contravariant_flux.h"
+#include "physics/contravariant_flux.h"
 
 parthenon::TaskStatus CalculateConservativeSRMHD(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {

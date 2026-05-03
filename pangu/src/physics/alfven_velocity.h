@@ -1,17 +1,17 @@
 // Copyright (c) 2026 Yuehang Li.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-// This file in the src/physics_transformation module defines alfven_velocity.h
+// This file in the src/physics module defines alfven_velocity.h
 // responsibilities for the Pangu runtime. It centers on basic_types to express core data
 // flow, keep interfaces readable, and preserve predictable behavior across task
 // coordination, recovery paths, and performance-sensitive execution.
 
-#ifndef PANGU_SRC_PHYSICSTRANSFORMATION_ALFVENVELOCITY_H
-#define PANGU_SRC_PHYSICSTRANSFORMATION_ALFVENVELOCITY_H
+#ifndef PANGU_SRC_PHYSICS_ALFVENVELOCITY_H
+#define PANGU_SRC_PHYSICS_ALFVENVELOCITY_H
 #include "basic_types.hpp"
 #include "initialization/variable_mnemonics.h"
 #include "metric/tensor_algebra.h"
-#include "physics_transformation/state_calculation.h"
+#include "physics/state_calculation.h"
 
 KOKKOS_INLINE_FUNCTION
 void CalculateAlfvenVelocitySRMHD(
@@ -148,4 +148,4 @@ void CalculateAlfvenVelocityGRMHD(
   }
 }
 
-#endif  // PANGU_SRC_PHYSICSTRANSFORMATION_ALFVENVELOCITY_H
+#endif  // PANGU_SRC_PHYSICS_ALFVENVELOCITY_H

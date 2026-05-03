@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "riemann_solver/geometric_source_term.h"
+#include "riemann_solver/source_term.h"
 #include "task_list/task_list.h"
 
 using namespace parthenon::driver::prelude;
@@ -106,7 +106,7 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
     auto &sc1 = pmb->meshblock_data.Get(stage_name[stage]);
 
     auto source_task =
-        tl.AddTask(none, AddSourceGRMHD, sc1, beta * dt, geom_sc);
+        tl.AddTask(none, AddGeometricSource, sc1, beta * dt, geom_sc);
     auto recover_task = tl.AddTask(source_task, RecoveryGRMHD, sc1, geom_sc);
     auto fix_rec = tl.AddTask(recover_task, FixRecovery, sc1);
   }

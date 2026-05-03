@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Yuehang Li.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-// This file in the src/numerical_correction module defines primitive_fixer.cc
-// responsibilities for the Pangu runtime. It centers on numerical_correction to express
+// This file in the src/fixer module defines primitive_fixer.cc
+// responsibilities for the Pangu runtime. It centers on fixer to express
 // core data flow, keep interfaces readable, and preserve predictable behavior across task
 // coordination, recovery paths, and performance-sensitive execution.
 
-#include "numerical_correction/primitive_fixer.h"
+#include "fixer/primitive_fixer.h"
 
 #include <memory>
 #include <parthenon/package.hpp>
@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "initialization/variable_mnemonics.h"
-#include "physics_transformation/state_calculation.h"
+#include "physics/state_calculation.h"
 
 parthenon::TaskStatus FixPrimitiveSRMHD(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {
