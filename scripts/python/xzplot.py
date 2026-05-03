@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument("--level-min", type=float, default=-7.0, help="Lower contour level in log10")
     parser.add_argument("--level-max", type=float, default=0.0, help="Upper contour level in log10")
     parser.add_argument("--level-count", type=int, default=500, help="Number of contour levels")
-    parser.add_argument("--cmap", default="viridis", help="Matplotlib colormap")
+    parser.add_argument("--cmap", default="jet", help="Matplotlib colormap")
     return parser.parse_args()
 
 
