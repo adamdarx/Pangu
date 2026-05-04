@@ -33,7 +33,9 @@ parthenon::TaskStatus FixRecovery(
 
   parthenon::PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+      "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+      "electron_entropy"
+  };
   auto primitive = resource->PackVariables(primitive_tags, primitiveIndexMap);
 
   const int offset_x2 = (bound_x2_interior.s != bound_x2_interior.e) ? 1 : 0;

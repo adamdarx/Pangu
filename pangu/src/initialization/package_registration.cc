@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "initialization/variable_mnemonics.h"
 #include "initialization/timestep_estimation.h"
 #include "mesh/refinement_criteria.h"
 
@@ -40,6 +41,15 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
       pin->GetOrAddReal("core", "energy_floor_pow", -2.5);
   const auto kSigmaMax = pin->GetOrAddReal("core", "sigma_max", 50);
   const auto kLorentzMax = pin->GetOrAddReal("core", "lorentz_max", 50);
+  const auto kFelConstant = pin->GetOrAddReal("electrons", "fel_constant", 0.1);
+    const auto kGammaE = pin->GetOrAddReal("electrons", "gamma_e", 4. / 3.);
+    const auto kGammaP = pin->GetOrAddReal("electrons", "gamma_p", 5. / 3.);
+    const auto kLimitKel = pin->GetOrAddBoolean("electrons", "limit_kel", true);
+    const auto kSuppressHighbHeat =
+            pin->GetOrAddBoolean("electrons", "suppress_highb_heat", false);
+  const auto kRatioMin = pin->GetOrAddReal("electrons", "ratio_min", 0.001);
+  const auto kRatioMax = pin->GetOrAddReal("electrons", "ratio_max", 1000.0);
+  const auto kFelInit = pin->GetOrAddReal("electrons", "fel_0", 0.1);
 
   package_core->AddParam<>("cfl_number", kCflNumber);
   package_core->AddParam<>("adiabatic_index", kAdiabaticIndex);
@@ -51,6 +61,14 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
   package_core->AddParam<>("energy_floor_pow", kEnergyFloorPow);
   package_core->AddParam<>("sigma_max", kSigmaMax);
   package_core->AddParam<>("lorentz_max", kLorentzMax);
+    package_core->AddParam<>("fel_constant", kFelConstant);
+    package_core->AddParam<>("gamma_e", kGammaE);
+    package_core->AddParam<>("gamma_p", kGammaP);
+    package_core->AddParam<>("limit_kel", kLimitKel);
+    package_core->AddParam<>("suppress_highb_heat", kSuppressHighbHeat);
+    package_core->AddParam<>("ratio_min", kRatioMin);
+    package_core->AddParam<>("ratio_max", kRatioMax);
+    package_core->AddParam<>("fel_0", kFelInit);
 
   parthenon::Metadata m;
   m = parthenon::Metadata(
@@ -59,6 +77,12 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
   m = parthenon::Metadata(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
   package_core->AddField(std::string("energy"), m);
+  m = parthenon::Metadata(
+      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
+  package_core->AddField(std::string("entropy"), m);
+  m = parthenon::Metadata(
+      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
+  package_core->AddField(std::string("electron_entropy"), m);
   m = parthenon::Metadata(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
   package_core->AddField(std::string("q_factor"), m);
@@ -83,7 +107,7 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
   m = parthenon::Metadata(
       {parthenon::Metadata::Cell, parthenon::Metadata::WithFluxes,
        parthenon::Metadata::Independent, parthenon::Metadata::FillGhost},
-      std::vector<int>({8}));
+      std::vector<int>({NPRIM}));
   package_core->AddField(std::string("conservative"), m);
   m = parthenon::Metadata(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});

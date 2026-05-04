@@ -17,56 +17,9 @@
 #include "initialization/variable_mnemonics.h"
 #include "physics/contravariant_flux.h"
 
-parthenon::TaskStatus CalculateConservativeSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {
-  using namespace parthenon;
-  PARTHENON_INSTRUMENT
-
-  const auto pmb = resource->GetBlockPointer();
-  const auto package_core = pmb->packages.Get("core");
-  const auto kAdiabaticIndex = package_core->Param<Real>("adiabatic_index");
-
-  const auto bound_x1_interior =
-      pmb->cellbounds.GetBoundsI(IndexDomain::interior);
-  const auto bound_x2_interior =
-      pmb->cellbounds.GetBoundsJ(IndexDomain::interior);
-  const auto bound_x3_interior =
-      pmb->cellbounds.GetBoundsK(IndexDomain::interior);
-
-  PackIndexMap primitiveIndexMap;
-  const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
-  const auto primitive =
-      resource->PackVariables(primitive_tags, primitiveIndexMap);
-  PackIndexMap conservativeIndexMap;
-  const std::vector<std::string> conservative_tags = {"conservative"};
-  auto conservative =
-      resource->PackVariablesAndFluxes(conservative_tags, conservativeIndexMap);
-
-  pmb->par_for(
-      PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
-      bound_x1_interior.s, bound_x1_interior.e,
-      KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        Real primitive_c_array[NPRIM];
-        for (int index = 0; index < NPRIM; ++index) {
-          primitive_c_array[index] = primitive(index, k, j, i);
-        }
-
-        Real ConservativeState[NPRIM];
-        CalculateContravariantFluxSRMHD(kAdiabaticIndex, primitive_c_array, X0DIR,
-                                        ConservativeState);
-
-        for (int index = 0; index < NPRIM; ++index) {
-          conservative(index, k, j, i) = ConservativeState[index];
-        }
-      });
-
-  return TaskStatus::complete;
-}
-
-parthenon::TaskStatus CalculateConservativeGRMHD(
+parthenon::TaskStatus CalculateConservative(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource) {
   using namespace parthenon;
   PARTHENON_INSTRUMENT
 
@@ -84,7 +37,9 @@ parthenon::TaskStatus CalculateConservativeGRMHD(
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+      "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+      "electron_entropy"
+  };
   const auto primitive =
       resource->PackVariables(primitive_tags, primitiveIndexMap);
 
@@ -93,9 +48,9 @@ parthenon::TaskStatus CalculateConservativeGRMHD(
   auto conservative =
       resource->PackVariablesAndFluxes(conservative_tags, conservativeIndexMap);
 
-  auto covariant_metric = geom_resource->Get("covariant_metric").data;
-  auto contravariant_metric = geom_resource->Get("contravariant_metric").data;
-  auto metric_determinant = geom_resource->Get("metric_determinant").data;
+  auto covariant_metric = init_resource->Get("covariant_metric").data;
+  auto contravariant_metric = init_resource->Get("contravariant_metric").data;
+  auto metric_determinant = init_resource->Get("metric_determinant").data;
 
   pmb->par_for(
       PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
@@ -116,7 +71,7 @@ parthenon::TaskStatus CalculateConservativeGRMHD(
         }
 
         Real conservative_c_array[NPRIM];
-        CalculateContravariantFluxGRMHD(
+        CalculateContravariantFlux(
             kAdiabaticIndex, primitive_c_array, gcov, gcon,
             metric_determinant(CENTER, k, j, i), X0DIR, conservative_c_array);
 

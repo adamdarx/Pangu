@@ -104,7 +104,7 @@ def _make_frame(task):
     x_max = args_dict["x_max"] if args_dict["x_max"] > 0.0 else float(np.nanmax(x_plot))
     r_h = 1.0 + np.sqrt(max(0.0, 1.0 - args_dict["kerr_a"] * args_dict["kerr_a"]))
 
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    fig, ax = plt.subplots(figsize=(11, 20), dpi=150)
     contour = ax.contourf(
         x_plot,
         z_plot,

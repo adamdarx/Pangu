@@ -15,37 +15,16 @@
 #include "physics/state_calculation.h"
 
 KOKKOS_INLINE_FUNCTION
-void CalculateContravariantFluxSRMHD(
-    const parthenon::Real gamma,
-    parthenon::Real prim[NPRIM], const int dir,
-    parthenon::Real flux[NPRIM]) {
-  State state;
-  CalculateSRMHDState(prim, state);
-
-  parthenon::Real t_dir[4];
-  CalculateEnergyMomentumTensorSRMHD(gamma, prim, dir, t_dir);
-
-  flux[RHO] = prim[RHO] * state.ucon[dir];
-  flux[ENY] = t_dir[0] + flux[RHO];
-  flux[UX1] = t_dir[1];
-  flux[UX2] = t_dir[2];
-  flux[UX3] = t_dir[3];
-  flux[BX1] = state.bcon[1] * state.ucon[dir] - state.bcon[dir] * state.ucon[1];
-  flux[BX2] = state.bcon[2] * state.ucon[dir] - state.bcon[dir] * state.ucon[2];
-  flux[BX3] = state.bcon[3] * state.ucon[dir] - state.bcon[dir] * state.ucon[3];
-}
-
-KOKKOS_INLINE_FUNCTION
-void CalculateContravariantFluxGRMHD(
+void CalculateContravariantFlux(
     const parthenon::Real gamma,
     parthenon::Real prim[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     const parthenon::Real gdet, const int dir,
     parthenon::Real flux[NPRIM]) {
   State state;
-  CalculateGRMHDState(prim, gcov, gcon, state);
+  CalculateState(prim, gcov, gcon, state);
   parthenon::Real t_dir[4];
-  CalculateEnergyMomentumTensorGRMHD(gamma, prim, gcov, gcon, dir, t_dir);
+  CalculateEnergyMomentumTensor(gamma, prim, gcov, gcon, dir, t_dir);
 
   flux[RHO] = prim[RHO] * state.ucon[dir];
   flux[ENY] = t_dir[0] + flux[RHO];
@@ -55,6 +34,8 @@ void CalculateContravariantFluxGRMHD(
   flux[BX1] = state.bcon[1] * state.ucon[dir] - state.bcon[dir] * state.ucon[1];
   flux[BX2] = state.bcon[2] * state.ucon[dir] - state.bcon[dir] * state.ucon[2];
   flux[BX3] = state.bcon[3] * state.ucon[dir] - state.bcon[dir] * state.ucon[3];
+  flux[ENT] = prim[ENT] * flux[RHO];
+  flux[KEL] = prim[KEL] * flux[RHO];
 
   const auto sqrt_abs_gdet = Kokkos::sqrt(Kokkos::abs(gdet));
   for (int n = 0; n < NPRIM; ++n) {

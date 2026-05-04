@@ -14,32 +14,13 @@
 #include "physics/state_calculation.h"
 
 KOKKOS_INLINE_FUNCTION
-void CalculateEnergyMomentumTensorSRMHD(
-    const parthenon::Real gamma,
-    parthenon::Real prim[NPRIM], const int dir,
-    parthenon::Real t_dir[4]) {
-  State state;
-  CalculateSRMHDState(prim, state);
-
-  const auto h = prim[RHO] + gamma * prim[ENY];
-  const auto e_tot = state.bsq + h;
-  const auto p_gas = (gamma - 1.) * prim[ENY];
-  const auto p_tot = p_gas + 0.5 * state.bsq;
-
-  for (int m = 0; m < 4; ++m) {
-    t_dir[m] = e_tot * state.ucon[dir] * state.ucov[m] + p_tot * (dir == m) -
-               state.bcon[dir] * state.bcov[m];
-  }
-}
-
-KOKKOS_INLINE_FUNCTION
-void CalculateEnergyMomentumTensorGRMHD(
+void CalculateEnergyMomentumTensor(
     const parthenon::Real gamma,
     parthenon::Real prim[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     const int dir, parthenon::Real t_dir[4]) {
   State state;
-  CalculateGRMHDState(prim, gcov, gcon, state);
+  CalculateState(prim, gcov, gcon, state);
 
   const auto p_gas = (gamma - 1.) * prim[ENY];
   const auto h = prim[RHO] + gamma * prim[ENY];

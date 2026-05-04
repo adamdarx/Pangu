@@ -22,41 +22,7 @@ struct State {
 };
 
 KOKKOS_INLINE_FUNCTION
-void CalculateSRMHDState(
-  parthenon::Real primitive[NPRIM], State &state) {
-  const auto u_sq = Kokkos::pow(primitive[UX1], 2) +
-                    Kokkos::pow(primitive[UX2], 2) +
-                    Kokkos::pow(primitive[UX3], 2);
-  const auto lorentz = Kokkos::sqrt(1.0 + u_sq);
-
-  state.ucon[0] = lorentz;
-  state.ucon[1] = primitive[UX1];
-  state.ucon[2] = primitive[UX2];
-  state.ucon[3] = primitive[UX3];
-
-  state.ucov[0] = -lorentz;
-  state.ucov[1] = primitive[UX1];
-  state.ucov[2] = primitive[UX2];
-  state.ucov[3] = primitive[UX3];
-
-  const auto b_dot_u = primitive[UX1] * primitive[BX1] +
-                       primitive[UX2] * primitive[BX2] +
-                       primitive[UX3] * primitive[BX3];
-
-  state.bcon[0] = b_dot_u;
-  state.bcon[1] = (primitive[BX1] + b_dot_u * primitive[UX1]) / lorentz;
-  state.bcon[2] = (primitive[BX2] + b_dot_u * primitive[UX2]) / lorentz;
-  state.bcon[3] = (primitive[BX3] + b_dot_u * primitive[UX3]) / lorentz;
-
-  state.bcov[0] = -b_dot_u;
-  state.bcov[1] = state.bcon[1];
-  state.bcov[2] = state.bcon[2];
-  state.bcov[3] = state.bcon[3];
-  state.bsq = state.bcon[0] * state.bcov[0] + state.bcon[1] * state.bcov[1] + state.bcon[2] * state.bcov[2] + state.bcon[3] * state.bcov[3];
-}
-
-KOKKOS_INLINE_FUNCTION
-void CalculateGRMHDState(
+void CalculateState(
     parthenon::Real primitive[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
     State &state) {

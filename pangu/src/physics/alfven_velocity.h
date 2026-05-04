@@ -14,70 +14,7 @@
 #include "physics/state_calculation.h"
 
 KOKKOS_INLINE_FUNCTION
-void CalculateAlfvenVelocitySRMHD(
-    const parthenon::Real gamma,
-    parthenon::Real prim[NPRIM], const int dir,
-    parthenon::Real &v_max, parthenon::Real &v_min) {
-  State state;
-  CalculateSRMHDState(prim, state);
-
-  const auto h = prim[RHO] + gamma * prim[ENY];
-  const auto h_tot = state.bsq + h;
-  const auto va_sq = state.bsq / h_tot;
-  const auto cs_sq = gamma * (gamma - 1.) * prim[ENY] / h;
-  auto cf_sq = cs_sq + va_sq - cs_sq * va_sq;
-
-  if (cf_sq < 0.) {
-    cf_sq = 1e-10;
-  } else if (cf_sq > 1.) {
-    cf_sq = 1.;
-  }
-
-  parthenon::Real ncon[4] = {0., 0., 0., 0.};
-  parthenon::Real ncov[4] = {0., 0., 0., 0.};
-  parthenon::Real tcon[4] = {-1., 0., 0., 0.};
-  parthenon::Real tcov[4] = {1., 0., 0., 0.};
-
-  ncov[dir] = 1.0;
-  ncon[dir] = (dir == 0) ? -1.0 : 1.0;
-
-  const auto n_sq = dot4(ncon, ncov);
-  const auto t_sq = dot4(tcon, tcov);
-  const auto n_dot_u = dot4(ncov, state.ucon);
-  const auto t_dot_u = dot4(tcov, state.ucon);
-  const auto n_dot_t = dot4(ncon, tcov);
-
-  const auto n_dot_u_sq = n_dot_u * n_dot_u;
-  const auto t_dot_u_sq = t_dot_u * t_dot_u;
-  const auto nu_tu = n_dot_u * t_dot_u;
-
-  const auto a = t_dot_u_sq - (t_sq + t_dot_u_sq) * cf_sq;
-  const auto b = 2. * (nu_tu - (n_dot_t + nu_tu) * cf_sq);
-  const auto c = n_dot_u_sq - (n_sq + n_dot_u_sq) * cf_sq;
-
-  auto disc = b * b - 4. * a * c;
-
-  if ((disc < 0.0) && (disc > -1.e-10)) {
-    disc = 0.0;
-  } else if (disc < -1.e-10) {
-    disc = 0.;
-  }
-
-  disc = Kokkos::sqrt(disc);
-  const auto v_plus = -(-b + disc) / (2. * a);
-  const auto v_minus = -(-b - disc) / (2. * a);
-
-  if (v_plus > v_minus) {
-    v_max = v_plus;
-    v_min = v_minus;
-  } else {
-    v_max = v_minus;
-    v_min = v_plus;
-  }
-}
-
-KOKKOS_INLINE_FUNCTION
-void CalculateAlfvenVelocityGRMHD(
+void CalculateAlfvenVelocity(
     const parthenon::Real gamma,
     parthenon::Real prim[NPRIM],
     const parthenon::Real gcov[4][4], const parthenon::Real gcon[4][4],
@@ -98,7 +35,7 @@ void CalculateAlfvenVelocityGRMHD(
   }
 
   State state;
-  CalculateGRMHDState(prim, gcov, gcon, state);
+  CalculateState(prim, gcov, gcon, state);
 
   const auto b_sq = dot4(state.bcon, state.bcov);
   const auto h = prim[RHO] + gamma * prim[ENY];

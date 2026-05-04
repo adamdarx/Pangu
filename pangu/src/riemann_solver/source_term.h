@@ -16,5 +16,5 @@
 parthenon::TaskStatus AddGeometricSource(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     parthenon::Real dt,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
 #endif  // PANGU_SRC_RIEMANNSOLVER_SOURCETERM_H

@@ -20,7 +20,7 @@
 parthenon::TaskStatus AddGeometricSource(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     parthenon::Real dt,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource) {
   using namespace parthenon;
   PARTHENON_INSTRUMENT
 
@@ -38,7 +38,9 @@ parthenon::TaskStatus AddGeometricSource(
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+      "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+      "electron_entropy"
+  };
   const auto primitive =
       resource->PackVariables(primitive_tags, primitiveIndexMap);
 
@@ -47,10 +49,10 @@ parthenon::TaskStatus AddGeometricSource(
   auto conservative =
       resource->PackVariablesAndFluxes(conservative_tags, conservativeIndexMap);
 
-  auto covariant_metric = geom_resource->Get("covariant_metric").data;
-  auto contravariant_metric = geom_resource->Get("contravariant_metric").data;
-  auto metric_determinant = geom_resource->Get("metric_determinant").data;
-  auto connection = geom_resource->Get("connection").data;
+  auto covariant_metric = init_resource->Get("covariant_metric").data;
+  auto contravariant_metric = init_resource->Get("contravariant_metric").data;
+  auto metric_determinant = init_resource->Get("metric_determinant").data;
+  auto connection = init_resource->Get("connection").data;
 
   pmb->par_for(
       PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
@@ -75,7 +77,7 @@ parthenon::TaskStatus AddGeometricSource(
 
         Real MixedEnergyMomentumTensor[4][4];
         for (int row = 0; row < 4; ++row) {
-          CalculateEnergyMomentumTensorGRMHD(kAdiabaticIndex, primitive_c_array,
+          CalculateEnergyMomentumTensor(kAdiabaticIndex, primitive_c_array,
                                              gcov, gcon, row,
                                              MixedEnergyMomentumTensor[row]);
         }

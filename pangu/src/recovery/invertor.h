@@ -11,12 +11,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Recovers SRMHD primitive variables from conservative variables.
-parthenon::TaskStatus RecoverySRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource);
-
 // Recovers GRMHD primitive variables from conservative and metric variables.
-parthenon::TaskStatus RecoveryGRMHD(
+parthenon::TaskStatus Recovery(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
 

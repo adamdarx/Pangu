@@ -12,13 +12,9 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Computes SRMHD numerical fluxes with the Lax-Friedrichs solver.
-parthenon::TaskStatus CalculateFluxesSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource);
-
 // Computes GRMHD numerical fluxes with the Lax-Friedrichs solver.
-parthenon::TaskStatus CalculateFluxesGRMHD(
+parthenon::TaskStatus CalculateFluxes(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
 
 #endif  // PANGU_SRC_RIEMANNSOLVER_LAXFRIEDRICHSFLUX_H

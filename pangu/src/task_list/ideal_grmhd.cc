@@ -68,10 +68,10 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
     auto &dudt = pmb->meshblock_data.Get("dUdt");
 
     auto &sc1 = pmb->meshblock_data.Get(stage_name[stage]);
-    auto fix_prim = tl.AddTask(none, FixPrimitiveGRMHD, sc0, geom_sc);
+    auto fix_prim = tl.AddTask(none, FixPrimitive, sc0, geom_sc);
     auto calc_cons =
-        tl.AddTask(fix_prim, CalculateConservativeGRMHD, sc0, geom_sc);
-    auto calc_flux = tl.AddTask(calc_cons, CalculateFluxesGRMHD, sc0, geom_sc);
+        tl.AddTask(fix_prim, CalculateConservative, sc0, geom_sc);
+    auto calc_flux = tl.AddTask(calc_cons, CalculateFluxes, sc0, geom_sc);
     auto ct_task = tl.AddTask(calc_flux, ConstraintedTransport, sc0);
   }
 
@@ -107,8 +107,9 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
 
     auto source_task =
         tl.AddTask(none, AddGeometricSource, sc1, beta * dt, geom_sc);
-    auto recover_task = tl.AddTask(source_task, RecoveryGRMHD, sc1, geom_sc);
-    auto fix_rec = tl.AddTask(recover_task, FixRecovery, sc1);
+    auto recover_task = tl.AddTask(source_task, Recovery, sc1, geom_sc);
+    auto electron_heat = tl.AddTask(recover_task, ApplyElectronHeating, sc1, geom_sc);
+    auto fix_rec = tl.AddTask(electron_heat, FixRecovery, sc1);
   }
 
   TaskRegion &async_region3 =

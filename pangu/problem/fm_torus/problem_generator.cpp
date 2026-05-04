@@ -105,6 +105,7 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
   const auto package_core = pmb->packages.Get("core");
   auto &resource = pmb->meshblock_data.Get();
   const Real kAdiabaticIndex = package_core->Param<Real>("adiabatic_index");
+  const Real kFelInit = package_core->Param<Real>("fel_0");
 
   const Real kerr_h = pin->GetOrAddReal("metric", "h", 0.7);
   const Real kerr_a = pin->GetOrAddReal("metric", "a", 0.9375);
@@ -131,7 +132,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+      "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+      "electron_entropy"
+  };
   auto primitive = resource->PackVariables(primitive_tags, primitiveIndexMap);
 
   auto covariant_metric = resource->Get("covariant_metric").data;
@@ -262,6 +265,7 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
 
         Real rho = 0.0;
         Real eint = 0.0;
+        Real ent = 0.0;
         Real wvx1 = 0.0;
         Real wvx2 = 0.0;
         Real wvx3 = 0.0;
@@ -300,6 +304,7 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
                    (kAdiabaticIndex - 1.0);
 
             eint *= (1.0 + perturbation * random);
+            ent = (kAdiabaticIndex - 1) * eint * Kokkos::pow(rho, -kAdiabaticIndex);
 
             const Real expm2chi = SS * SS * DD / (AA * AA * sth * sth);
             const Real up1 = Kokkos::sqrt(
@@ -328,6 +333,8 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         primitive(BX1, k, j, i) = 0.0;
         primitive(BX2, k, j, i) = 0.0;
         primitive(BX3, k, j, i) = 0.0;
+        primitive(ENT, k, j, i) = ent;
+        primitive(KEL, k, j, i) = kFelInit * ent;
       });
 
   Real rhomax = 0.0;
@@ -428,9 +435,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
           primitive_c_array[index] = primitive(index, k, j, i);
         }
 
-        State stateGRMHD;
-        CalculateGRMHDState(primitive_c_array, gcov, gcon, stateGRMHD);
-        local_bsq_max = Kokkos::max(local_bsq_max, stateGRMHD.bsq);
+        State state;
+        CalculateState(primitive_c_array, gcov, gcon, state);
+        local_bsq_max = Kokkos::max(local_bsq_max, state.bsq);
       },
       Kokkos::Max<Real>(bsq_max));
 

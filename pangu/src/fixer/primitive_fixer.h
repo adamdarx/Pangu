@@ -12,12 +12,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Applies SRMHD primitive floors and velocity ceilings.
-parthenon::TaskStatus FixPrimitiveSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource);
-
 // Applies GRMHD primitive floors and velocity ceilings using metric data.
-parthenon::TaskStatus FixPrimitiveGRMHD(
+parthenon::TaskStatus FixPrimitive(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
 

@@ -12,6 +12,7 @@ Options:
   -w, --workers <n>           Worker processes for contour1d.py (default: 4)
       --movie2d               Use movie2d.py to generate 2D frame images
       --xzplot                Use xzplot.py to generate x-z transformed frame images
+          --2t                    Use xz_temperature_plot.py to generate ion/electron x-z frames
       --data-root <path>      Data root directory (default: <repo>/data)
       --pic-root <path>       Picture root directory (default: <repo>/pic)
       --savename <name.png>   Output image filename (default: contour_<field>.png)
@@ -28,6 +29,7 @@ FIELD="density"
 WORKERS="4"
 USE_MOVIE2D="OFF"
 USE_XZPLOT="OFF"
+USE_2T="OFF"
 DATA_ROOT="${DATA_ROOT:-$ROOT_DIR/data}"
 PIC_ROOT="${PIC_ROOT:-$ROOT_DIR/pic}"
 SAVENAME=""
@@ -53,6 +55,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --xzplot)
       USE_XZPLOT="ON"
+      shift
+      ;;
+    --2t)
+      USE_2T="ON"
       shift
       ;;
     --data-root)
@@ -114,9 +120,14 @@ fi
 CONTOUR_SCRIPT="$ROOT_DIR/parthenon/scripts/python/packages/parthenon_tools/parthenon_tools/contour1d.py"
 MOVIE2D_SCRIPT="$ROOT_DIR/parthenon/scripts/python/packages/parthenon_tools/parthenon_tools/movie2d.py"
 XZPLOT_SCRIPT="$ROOT_DIR/scripts/python/xzplot.py"
+XZ_TEMP_SCRIPT="$ROOT_DIR/scripts/python/xz_temperature_plot.py"
 
 if [[ "$USE_MOVIE2D" == "ON" && "$USE_XZPLOT" == "ON" ]]; then
   echo "ERROR: --movie2d and --xzplot are mutually exclusive"
+  exit 2
+fi
+if [[ "$USE_2T" == "ON" && ("$USE_MOVIE2D" == "ON" || "$USE_XZPLOT" == "ON") ]]; then
+  echo "ERROR: --2t is mutually exclusive with --movie2d and --xzplot"
   exit 2
 fi
 
@@ -150,6 +161,7 @@ if [[ -f "$metric_file" ]]; then
   fi
 fi
 
+
 mkdir -p "$PIC_ROOT/$PROBLEM"
 
 if [[ -z "$SAVENAME" ]]; then
@@ -158,6 +170,8 @@ if [[ -z "$SAVENAME" ]]; then
     SAVENAME="movie2d_${safe_field}"
   elif [[ "$USE_XZPLOT" == "ON" ]]; then
     SAVENAME="xzplot_${safe_field}"
+  elif [[ "$USE_2T" == "ON" ]]; then
+    SAVENAME="xztemp_${safe_field}"
   else
     SAVENAME="contour_${safe_field}.png"
   fi
@@ -192,6 +206,10 @@ elif [[ "$USE_XZPLOT" == "ON" ]]; then
   echo "[analyze.sh] Mode: xzplot"
   echo "[analyze.sh] Output dir: $OUT_PNG"
   echo "[analyze.sh] METRIC a=$kerr_a h=$kerr_h"
+elif [[ "$USE_2T" == "ON" ]]; then
+  echo "[analyze.sh] Mode: 2T xz temperature frames"
+  echo "[analyze.sh] Output dir: $OUT_PNG"
+  echo "[analyze.sh] METRIC a=$kerr_a h=$kerr_h"
 else
   echo "[analyze.sh] Mode: contour1d"
   echo "[analyze.sh] Output: $OUT_PNG"
@@ -222,6 +240,19 @@ elif [[ "$USE_XZPLOT" == "ON" ]]; then
     --kerr-a "$kerr_a" \
     --kerr-h "$kerr_h" \
     "$FIELD" \
+    "${files[@]}"
+elif [[ "$USE_2T" == "ON" ]]; then
+  if [[ ! -f "$XZ_TEMP_SCRIPT" ]]; then
+    echo "ERROR: xz_temperature_plot.py not found: $XZ_TEMP_SCRIPT"
+    exit 4
+  fi
+  mkdir -p "$OUT_PNG"
+  python3 "$XZ_TEMP_SCRIPT" \
+    --workers "$WORKERS" \
+    --output-directory "$OUT_PNG" \
+    --prefix "${FIELD//\//_}" \
+    --kerr-a "$kerr_a" \
+    --kerr-h "$kerr_h" \
     "${files[@]}"
 else
   if [[ ! -f "$CONTOUR_SCRIPT" ]]; then

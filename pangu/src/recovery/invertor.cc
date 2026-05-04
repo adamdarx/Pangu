@@ -14,73 +14,12 @@
 #include <vector>
 
 #include "initialization/variable_mnemonics.h"
+#include "recovery/constants.h"
 #include "recovery/scheme_1d.h"
 #include "recovery/scheme_1d_vsq.h"
 #include "recovery/scheme_2d.h"
 
-parthenon::TaskStatus RecoverySRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {
-  PARTHENON_INSTRUMENT
-
-  const auto pmb = resource->GetBlockPointer();
-  const auto package_core = pmb->packages.Get("core");
-  const auto kAdiabaticIndex =
-      package_core->Param<parthenon::Real>("adiabatic_index");
-
-  const auto bound_x1_interior =
-      pmb->cellbounds.GetBoundsI(parthenon::IndexDomain::interior);
-  const auto bound_x2_interior =
-      pmb->cellbounds.GetBoundsJ(parthenon::IndexDomain::interior);
-  const auto bound_x3_interior =
-      pmb->cellbounds.GetBoundsK(parthenon::IndexDomain::interior);
-
-  PackIndexMap primitiveIndexMap;
-  const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
-  auto primitive = resource->PackVariables(primitive_tags, primitiveIndexMap);
-  PackIndexMap conservativeIndexMap;
-  const std::vector<std::string> conservative_tags = {"conservative"};
-  const auto conservative =
-      resource->PackVariables(conservative_tags, conservativeIndexMap);
-  auto &flag = resource->Get("flag").data;
-
-  pmb->par_for(
-      PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
-      bound_x1_interior.s, bound_x1_interior.e,
-      KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        parthenon::Real conservativeCArray[NPRIM],
-            primitiveCArray[NPRIM];
-        for (int index = 0; index < NPRIM; ++index) {
-          conservativeCArray[index] = conservative(index, k, j, i);
-          primitiveCArray[index] = primitive(index, k, j, i);
-        }
-
-        conservativeCArray[ENY] -= conservativeCArray[RHO];
-        Real gcov[4][4] = {{-1., 0., 0., 0.},
-                           {0., 1., 0., 0.},
-                           {0., 0., 1., 0.},
-                           {0., 0., 0., 1.}};
-        Real gcon[4][4] = {{-1., 0., 0., 0.},
-                           {0., 1., 0., 0.},
-                           {0., 0., 1., 0.},
-                           {0., 0., 0., 1.}};
-        Real gdet = -1.;
-        flag(k, j, i) = 0;
-        if (Scheme2D::invert(conservativeCArray, primitiveCArray,
-                             kAdiabaticIndex, gcov, gcon, gdet) == 0 ||
-            Scheme1D::invert(conservativeCArray, primitiveCArray,
-                             kAdiabaticIndex, gcov, gcon, gdet) == 0 ||
-            Scheme1Dvsq::invert(conservativeCArray, primitiveCArray,
-                                kAdiabaticIndex, gcov, gcon, gdet) == 0) {
-          for (int index = 0; index < NPRIM; ++index)
-            primitive(index, k, j, i) = primitiveCArray[index];
-          flag(k, j, i) = 1;
-        }
-      });
-  return parthenon::TaskStatus::complete;
-}
-
-parthenon::TaskStatus RecoveryGRMHD(
+parthenon::TaskStatus Recovery(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
   PARTHENON_INSTRUMENT
@@ -99,7 +38,9 @@ parthenon::TaskStatus RecoveryGRMHD(
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+      "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+      "electron_entropy"
+  };
   auto primitive = resource->PackVariables(primitive_tags, primitiveIndexMap);
   PackIndexMap conservativeIndexMap;
   const std::vector<std::string> conservative_tags = {"conservative"};
@@ -115,9 +56,9 @@ parthenon::TaskStatus RecoveryGRMHD(
       PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e, bound_x2_interior.s, bound_x2_interior.e,
       bound_x1_interior.s, bound_x1_interior.e,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
-        parthenon::Real conservativeCArray[NPRIM],
-            primitiveCArray[NPRIM];
-        for (int index = 0; index < NPRIM; ++index) {
+        parthenon::Real conservativeCArray[NPRIM_RECV],
+            primitiveCArray[NPRIM_RECV];
+        for (int index = 0; index < NPRIM_RECV; ++index) {
           conservativeCArray[index] = conservative(index, k, j, i);
           primitiveCArray[index] = primitive(index, k, j, i);
         }
@@ -136,8 +77,8 @@ parthenon::TaskStatus RecoveryGRMHD(
         const parthenon::Real sqrt_abs_g = Kokkos::sqrt(Kokkos::fabs(gdet));
         const parthenon::Real alpha = 1.0 / Kokkos::sqrt(-gcon[0][0]);
 
-        parthenon::Real conservativeHarm[NPRIM];
-        parthenon::Real primitiveHarm[NPRIM];
+        parthenon::Real conservativeHarm[NPRIM_RECV];
+        parthenon::Real primitiveHarm[NPRIM_RECV];
 
         const parthenon::Real inv_sqrt_abs_g = 1.0 / sqrt_abs_g;
         const parthenon::Real alpha_over_sqrt_abs_g = alpha * inv_sqrt_abs_g;
@@ -188,6 +129,7 @@ parthenon::TaskStatus RecoveryGRMHD(
         }
         for (int index = 0; index < BX1; ++index)
           primitive(index, k, j, i) = primitiveHarm[index];
+        primitive(ENT, k, j, i) = (kAdiabaticIndex - 1.0) * primitive(ENY, k, j, i) * Kokkos::pow(primitive(RHO, k, j, i), -kAdiabaticIndex);
       });
 
   return parthenon::TaskStatus::complete;

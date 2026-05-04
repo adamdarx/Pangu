@@ -20,289 +20,9 @@
 #include "physics/alfven_velocity.h"
 #include "physics/contravariant_flux.h"
 
-parthenon::TaskStatus CalculateFluxesSRMHD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource) {
-  using namespace parthenon;
-  PARTHENON_INSTRUMENT
-
-  const auto pmb = resource->GetBlockPointer();
-  const auto package_core = pmb->packages.Get("core");
-  const auto &kAdiabaticIndex = package_core->Param<Real>("adiabatic_index");
-
-  const auto bound_x1_interior =
-      pmb->cellbounds.GetBoundsI(IndexDomain::interior);
-  const auto bound_x2_interior =
-      pmb->cellbounds.GetBoundsJ(IndexDomain::interior);
-  const auto bound_x3_interior =
-      pmb->cellbounds.GetBoundsK(IndexDomain::interior);
-
-  PackIndexMap primitiveIndexMap;
-  const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
-  const auto primitive =
-      resource->PackVariables(primitive_tags, primitiveIndexMap);
-  PackIndexMap conservativeIndexMap;
-  const std::vector<std::string> conservative_tags = {"conservative"};
-  auto conservative =
-      resource->PackVariablesAndFluxes(conservative_tags, conservativeIndexMap);
-  PackIndexMap alfvenVelocityIndexMap;
-  const std::vector<std::string> alfven_tags = {"alfven"};
-  auto AlfvenVelocity =
-      resource->PackVariables(alfven_tags, alfvenVelocityIndexMap);
-
-  const int ScratchLevel = 1;
-  const auto meshgrid_size_x1 =
-      pmb->cellbounds.ncellsi(IndexDomain::entire);
-  const auto meshgrid_size_x2 =
-      pmb->cellbounds.ncellsj(IndexDomain::entire);
-  const auto meshgrid_size_x3 =
-      pmb->cellbounds.ncellsk(IndexDomain::entire);
-
-  const size_t ScratchSizeInBytesX1 =
-      ScratchPad2D<Real>::shmem_size(NPRIM, meshgrid_size_x1);
-  const size_t ScratchSizeInBytesX2 =
-      ScratchPad2D<Real>::shmem_size(NPRIM, meshgrid_size_x2);
-  const size_t ScratchSizeInBytesX3 =
-      ScratchPad2D<Real>::shmem_size(NPRIM, meshgrid_size_x3);
-
-  const int offset_x1 = (meshgrid_size_x1 > 1) ? 1 : 0;
-  const int offset_x2 = (meshgrid_size_x2 > 1) ? 1 : 0;
-  const int offset_x3 = (meshgrid_size_x3 > 1) ? 1 : 0;
-
-  pmb->par_for_outer(
-      PARTHENON_AUTO_LABEL, 2 * ScratchSizeInBytesX1, ScratchLevel,
-      bound_x3_interior.s - offset_x3, bound_x3_interior.e + offset_x3, bound_x2_interior.s - offset_x2,
-      bound_x2_interior.e + offset_x2,
-      KOKKOS_LAMBDA(team_mbr_t member, const int k, const int j) {
-        ScratchPad2D<Real> primitiveLeft(member.team_scratch(ScratchLevel),
-                                         NPRIM,
-                                         meshgrid_size_x1);
-        ScratchPad2D<Real> primitiveRight(member.team_scratch(ScratchLevel),
-                                          NPRIM,
-                                          meshgrid_size_x1);
-
-        par_for_inner(member, 0, NPRIM - 1, bound_x1_interior.s,
-                      bound_x1_interior.e + 1, [&](const int n, const int i) {
-                        primitiveLeft(n, i) =
-                            primitive(n, k, j, i - 1) +
-                            0.5 * InterpolateMC(primitive(n, k, j, i - 2),
-                                                primitive(n, k, j, i - 1),
-                                                primitive(n, k, j, i));
-                        primitiveRight(n, i) =
-                            primitive(n, k, j, i) -
-                            0.5 * InterpolateMC(primitive(n, k, j, i - 1),
-                                                primitive(n, k, j, i),
-                                                primitive(n, k, j, i + 1));
-                      });
-
-        member.team_barrier();
-
-        par_for_inner(member, bound_x1_interior.s, bound_x1_interior.e + 1, [&](const int i) {
-          Real conservativeLeft[NPRIM];
-          Real conservativeRight[NPRIM];
-          Real fluxLeft[NPRIM];
-          Real fluxRight[NPRIM];
-          Real PrimitiveLeftCArray[NPRIM];
-          Real PrimitiveRightCArray[NPRIM];
-          for (int index = 0; index < NPRIM; ++index) {
-            PrimitiveLeftCArray[index] = primitiveLeft(index, i);
-            PrimitiveRightCArray[index] = primitiveRight(index, i);
-          }
-
-          Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
-          Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-          CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
-                                       X1DIR, maximumAlfvenVelocityLeft,
-                                       minimumAlfvenVelocityLeft);
-          CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveRightCArray,
-                                       X1DIR, maximumAlfvenVelocityRight,
-                                       minimumAlfvenVelocityRight);
-          const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
-              Kokkos::max(Kokkos::max(0., maximumAlfvenVelocityLeft),
-                          maximumAlfvenVelocityRight));
-          const auto MinimumAlfvenVelocityCenter = Kokkos::fabs(
-              Kokkos::max(Kokkos::max(0., -minimumAlfvenVelocityLeft),
-                          -minimumAlfvenVelocityRight));
-          const auto AlfvenVelocityCenter = Kokkos::max(
-              MaximumAlfvenVelocityCenter, MinimumAlfvenVelocityCenter);
-          AlfvenVelocity(Vector3D::X1, k, j, i) = AlfvenVelocityCenter;
-
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
-                                          X0DIR, conservativeLeft);
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveRightCArray,
-                                          X0DIR, conservativeRight);
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
-                                          X1DIR, fluxLeft);
-          CalculateContravariantFluxSRMHD(kAdiabaticIndex, PrimitiveRightCArray,
-                                          X1DIR, fluxRight);
-
-          for (int index = 0; index < NPRIM; index++)
-            conservative.flux(X1DIR, index, k, j, i) =
-                0.5 * (fluxLeft[index] + fluxRight[index] -
-                       AlfvenVelocityCenter * (conservativeRight[index] -
-                                               conservativeLeft[index]));
-        });
-      });
-
-  if (pmb->pmy_mesh->ndim >= 2)
-    pmb->par_for_outer(
-        PARTHENON_AUTO_LABEL, 2 * ScratchSizeInBytesX2, ScratchLevel,
-        bound_x3_interior.s - offset_x3, bound_x3_interior.e + offset_x3, bound_x1_interior.s - offset_x1,
-        bound_x1_interior.e + offset_x1,
-        KOKKOS_LAMBDA(team_mbr_t member, const int k, const int i) {
-          ScratchPad2D<Real> primitiveLeft(member.team_scratch(ScratchLevel),
-                                           NPRIM,
-                                           meshgrid_size_x2);
-          ScratchPad2D<Real> primitiveRight(member.team_scratch(ScratchLevel),
-                                            NPRIM,
-                                            meshgrid_size_x2);
-
-          par_for_inner(member, 0, NPRIM - 1, bound_x2_interior.s,
-                        bound_x2_interior.e + 1, [&](const int n, const int j) {
-                          primitiveLeft(n, j) =
-                              primitive(n, k, j - 1, i) +
-                              0.5 * InterpolateMC(primitive(n, k, j - 2, i),
-                                                  primitive(n, k, j - 1, i),
-                                                  primitive(n, k, j, i));
-                          primitiveRight(n, j) =
-                              primitive(n, k, j, i) -
-                              0.5 * InterpolateMC(primitive(n, k, j - 1, i),
-                                                  primitive(n, k, j, i),
-                                                  primitive(n, k, j + 1, i));
-                        });
-
-          member.team_barrier();
-
-          par_for_inner(member, bound_x2_interior.s, bound_x2_interior.e + 1, [&](const int j) {
-            Real conservativeLeft[NPRIM];
-            Real conservativeRight[NPRIM];
-            Real fluxLeft[NPRIM];
-            Real fluxRight[NPRIM];
-            Real PrimitiveLeftCArray[NPRIM];
-            Real PrimitiveRightCArray[NPRIM];
-            for (int index = 0; index < NPRIM; ++index) {
-              PrimitiveLeftCArray[index] = primitiveLeft(index, j);
-              PrimitiveRightCArray[index] = primitiveRight(index, j);
-            }
-
-            Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
-            Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-            CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
-                                         X2DIR, maximumAlfvenVelocityLeft,
-                                         minimumAlfvenVelocityLeft);
-            CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveRightCArray,
-                                         X2DIR, maximumAlfvenVelocityRight,
-                                         minimumAlfvenVelocityRight);
-            const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
-                Kokkos::max(Kokkos::max(0., maximumAlfvenVelocityLeft),
-                            maximumAlfvenVelocityRight));
-            const auto MinimumAlfvenVelocityCenter = Kokkos::fabs(
-                Kokkos::max(Kokkos::max(0., -minimumAlfvenVelocityLeft),
-                            -minimumAlfvenVelocityRight));
-            const auto AlfvenVelocityCenter = Kokkos::max(
-                MaximumAlfvenVelocityCenter, MinimumAlfvenVelocityCenter);
-            AlfvenVelocity(Vector3D::X2, k, j, i) = AlfvenVelocityCenter;
-
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveLeftCArray, X0DIR, conservativeLeft);
-            CalculateContravariantFluxSRMHD(kAdiabaticIndex,
-                                            PrimitiveRightCArray, X0DIR,
-                                            conservativeRight);
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveLeftCArray, X2DIR, fluxLeft);
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveRightCArray, X1DIR, fluxRight);
-
-            for (int index = 0; index < NPRIM; index++)
-              conservative.flux(X2DIR, index, k, j, i) =
-                  0.5 * (fluxLeft[index] + fluxRight[index] -
-                         AlfvenVelocityCenter * (conservativeRight[index] -
-                                                 conservativeLeft[index]));
-          });
-        });
-
-  if (pmb->pmy_mesh->ndim == 3)
-    pmb->par_for_outer(
-        PARTHENON_AUTO_LABEL, 2 * ScratchSizeInBytesX3, ScratchLevel, bound_x2_interior.s,
-        bound_x2_interior.e, bound_x1_interior.s, bound_x1_interior.e,
-        KOKKOS_LAMBDA(team_mbr_t member, const int j, const int i) {
-          ScratchPad2D<Real> primitiveLeft(member.team_scratch(ScratchLevel),
-                                           NPRIM,
-                                           meshgrid_size_x3);
-          ScratchPad2D<Real> primitiveRight(member.team_scratch(ScratchLevel),
-                                            NPRIM,
-                                            meshgrid_size_x3);
-
-          par_for_inner(member, 0, NPRIM - 1, bound_x3_interior.s,
-                        bound_x3_interior.e + 1, [&](const int n, const int k) {
-                          primitiveLeft(n, k) =
-                              primitive(n, k - 1, j, i) +
-                              0.5 * InterpolateMC(primitive(n, k - 2, j, i),
-                                                  primitive(n, k - 1, j, i),
-                                                  primitive(n, k, j, i));
-                          primitiveRight(n, k) =
-                              primitive(n, k, j, i) -
-                              0.5 * InterpolateMC(primitive(n, k - 1, j, i),
-                                                  primitive(n, k, j, i),
-                                                  primitive(n, k + 1, j, i));
-                        });
-
-          member.team_barrier();
-
-          par_for_inner(member, bound_x3_interior.s, bound_x3_interior.e + 1, [&](const int k) {
-            Real conservativeLeft[NPRIM];
-            Real conservativeRight[NPRIM];
-            Real fluxLeft[NPRIM];
-            Real fluxRight[NPRIM];
-            Real PrimitiveLeftCArray[NPRIM];
-            Real PrimitiveRightCArray[NPRIM];
-            for (int index = 0; index < NPRIM; ++index) {
-              PrimitiveLeftCArray[index] = primitiveLeft(index, k);
-              PrimitiveRightCArray[index] = primitiveRight(index, k);
-            }
-
-            Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
-            Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-            CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveLeftCArray,
-                                         X3DIR, maximumAlfvenVelocityLeft,
-                                         minimumAlfvenVelocityLeft);
-            CalculateAlfvenVelocitySRMHD(kAdiabaticIndex, PrimitiveRightCArray,
-                                         X3DIR, maximumAlfvenVelocityRight,
-                                         minimumAlfvenVelocityRight);
-            const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
-                Kokkos::max(Kokkos::max(0., maximumAlfvenVelocityLeft),
-                            maximumAlfvenVelocityRight));
-            const auto MinimumAlfvenVelocityCenter = Kokkos::fabs(
-                Kokkos::max(Kokkos::max(0., -minimumAlfvenVelocityLeft),
-                            -minimumAlfvenVelocityRight));
-            const auto AlfvenVelocityCenter = Kokkos::max(
-                MaximumAlfvenVelocityCenter, MinimumAlfvenVelocityCenter);
-            AlfvenVelocity(Vector3D::X3, k, j, i) = AlfvenVelocityCenter;
-
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveLeftCArray, X0DIR, conservativeLeft);
-            CalculateContravariantFluxSRMHD(kAdiabaticIndex,
-                                            PrimitiveRightCArray, X0DIR,
-                                            conservativeRight);
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveLeftCArray, X3DIR, fluxLeft);
-            CalculateContravariantFluxSRMHD(
-                kAdiabaticIndex, PrimitiveRightCArray, X3DIR, fluxRight);
-
-            for (int index = 0; index < NPRIM; index++)
-              conservative.flux(X3DIR, index, k, j, i) =
-                  0.5 * (fluxLeft[index] + fluxRight[index] -
-                         AlfvenVelocityCenter * (conservativeRight[index] -
-                                                 conservativeLeft[index]));
-          });
-        });
-
-  return TaskStatus::complete;
-}
-
-parthenon::TaskStatus CalculateFluxesGRMHD(
+parthenon::TaskStatus CalculateFluxes(
     std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
+    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource) {
   using namespace parthenon;
   PARTHENON_INSTRUMENT
 
@@ -320,7 +40,9 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
-      "density", "energy", "weighted_velocity", "magnetic_field"};
+	  "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
+	  "electron_entropy"
+    };
   const auto primitive =
       resource->PackVariables(primitive_tags, primitiveIndexMap);
   PackIndexMap conservativeIndexMap;
@@ -332,9 +54,9 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
   auto AlfvenVelocity =
       resource->PackVariables(alfven_tags, alfvenVelocityIndexMap);
 
-  auto covariant_metric = geom_resource->Get("covariant_metric").data;
-  auto contravariant_metric = geom_resource->Get("contravariant_metric").data;
-  auto metric_determinant = geom_resource->Get("metric_determinant").data;
+  auto covariant_metric = init_resource->Get("covariant_metric").data;
+  auto contravariant_metric = init_resource->Get("contravariant_metric").data;
+  auto metric_determinant = init_resource->Get("metric_determinant").data;
 
   const auto meshgrid_size_x1 =
       pmb->cellbounds.ncellsi(IndexDomain::entire);
@@ -381,10 +103,10 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
         Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
         Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-        CalculateAlfvenVelocityGRMHD(
+        CalculateAlfvenVelocity(
             kAdiabaticIndex, primitiveLeft, gcovFace, gconFace, X1DIR,
             maximumAlfvenVelocityLeft, minimumAlfvenVelocityLeft);
-        CalculateAlfvenVelocityGRMHD(
+        CalculateAlfvenVelocity(
             kAdiabaticIndex, primitiveRight, gcovFace, gconFace, X1DIR,
             maximumAlfvenVelocityRight, minimumAlfvenVelocityRight);
         const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
@@ -398,16 +120,16 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
         AlfvenVelocity(Vector3D::X1, k, j, i) = AlfvenVelocityCenter;
 
         const auto MetricDeterminantFace = metric_determinant(FACEX1, k, j, i);
-        CalculateContravariantFluxGRMHD(
+        CalculateContravariantFlux(
             kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
             MetricDeterminantFace, X0DIR, conservativeLeft);
-        CalculateContravariantFluxGRMHD(
+        CalculateContravariantFlux(
             kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
             MetricDeterminantFace, X0DIR, conservativeRight);
-        CalculateContravariantFluxGRMHD(
+        CalculateContravariantFlux(
             kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
             MetricDeterminantFace, X1DIR, fluxLeft);
-        CalculateContravariantFluxGRMHD(
+        CalculateContravariantFlux(
             kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
             MetricDeterminantFace, X1DIR, fluxRight);
 
@@ -454,10 +176,10 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
 					Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
 					Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-					CalculateAlfvenVelocityGRMHD(
+					CalculateAlfvenVelocity(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace, X2DIR,
 							maximumAlfvenVelocityLeft, minimumAlfvenVelocityLeft);
-					CalculateAlfvenVelocityGRMHD(
+					CalculateAlfvenVelocity(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							X2DIR, maximumAlfvenVelocityRight, minimumAlfvenVelocityRight);
 					const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
@@ -472,16 +194,16 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
 					const auto MetricDeterminantFace =
 							metric_determinant(FACEX2, k, j, i);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
 							MetricDeterminantFace, X0DIR, conservativeLeft);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							MetricDeterminantFace, X0DIR, conservativeRight);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
 							MetricDeterminantFace, X2DIR, fluxLeft);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							MetricDeterminantFace, X2DIR, fluxRight);
 
@@ -529,10 +251,10 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
 					Real maximumAlfvenVelocityLeft, maximumAlfvenVelocityRight;
 					Real minimumAlfvenVelocityLeft, minimumAlfvenVelocityRight;
-					CalculateAlfvenVelocityGRMHD(
+					CalculateAlfvenVelocity(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace, X3DIR,
 							maximumAlfvenVelocityLeft, minimumAlfvenVelocityLeft);
-					CalculateAlfvenVelocityGRMHD(
+					CalculateAlfvenVelocity(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							X3DIR, maximumAlfvenVelocityRight, minimumAlfvenVelocityRight);
 					const auto MaximumAlfvenVelocityCenter = Kokkos::fabs(
@@ -547,16 +269,16 @@ parthenon::TaskStatus CalculateFluxesGRMHD(
 
 					const auto MetricDeterminantFace =
 							metric_determinant(FACEX3, k, j, i);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
 							MetricDeterminantFace, X0DIR, conservativeLeft);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							MetricDeterminantFace, X0DIR, conservativeRight);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveLeft, gcovFace, gconFace,
 							MetricDeterminantFace, X3DIR, fluxLeft);
-					CalculateContravariantFluxGRMHD(
+					CalculateContravariantFlux(
 							kAdiabaticIndex, primitiveRight, gcovFace, gconFace,
 							MetricDeterminantFace, X3DIR, fluxRight);
 

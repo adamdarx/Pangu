@@ -21,6 +21,7 @@
 #include "prolong_restrict/prolong_restrict.hpp"
 #include "recovery/invertor.h"
 #include "riemann_solver/conservative.h"
+#include "riemann_solver/electron_heating.h"
 #include "riemann_solver/lax_friedrichs_flux.h"
 
 #include <memory>
