@@ -5,28 +5,28 @@ problem_id = fm_torus
 refinement = none
 numlevel = 1
 
-nx1 = 512
+nx1 = 100
 x1min = 0.2
-x1max = 8.0
+x1max = 6.0
 ix1_bc = outflow
 ox1_bc = outflow
 
-nx2 = 256
+nx2 = 100
 x2min = -1.0
 x2max = 1.0
 ix2_bc = reflecting
 ox2_bc = reflecting
 
-nx3 = 1
+nx3 = 100
 x3min = -3.1415926535897
 x3max = 3.1415926535897
 ix3_bc = periodic
 ox3_bc = periodic
 
 <parthenon/meshblock>
-nx1 = 512
-nx2 = 256
-nx3 = 1
+nx1 = 50
+nx2 = 100
+nx3 = 100
 
 <parthenon/time>
 dt_factor = 1.3
