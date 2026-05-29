@@ -6,7 +6,7 @@
 
 #include <Kokkos_Core.hpp>
 
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 
 namespace Minkowski {
 

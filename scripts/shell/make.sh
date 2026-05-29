@@ -17,6 +17,7 @@ CMAKE_EXTRA_ARGS="${CMAKE_EXTRA_ARGS:-}"
 PROBLEM_PROXY_MODE="${PROBLEM_PROXY_MODE:-ON}"
 PROBLEM_PROXY_NAME="${PROBLEM_PROXY_NAME:-__active_problem__}"
 
+
 if [[ "$ENABLE_OPENMP" != "ON" && "$ENABLE_OPENMP" != "OFF" ]]; then
   echo "ERROR: ENABLE_OPENMP must be ON or OFF"
   exit 1

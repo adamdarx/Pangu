@@ -62,15 +62,13 @@ KOKKOS_INLINE_FUNCTION
 parthenon::Real ComputeTotalEntropy(const parthenon::Real gamma,
                                     const parthenon::Real rho,
                                     const parthenon::Real energy) {
-  constexpr parthenon::Real kSmall = 1.0e-20;
-  return (gamma - 1.0) * energy * Kokkos::pow(Kokkos::max(rho, kSmall), -gamma);
+  return (gamma - 1.0) * energy * Kokkos::pow(Kokkos::max(rho, 1.0e-20), -gamma);
 }
 
 KOKKOS_INLINE_FUNCTION
 parthenon::Real RecoverAdvectedScalar(const parthenon::Real cons_rho,
                                       const parthenon::Real cons_scalar) {
-  constexpr parthenon::Real kSmall = 1.0e-20;
-  return cons_scalar / Kokkos::max(cons_rho, kSmall);
+  return cons_scalar / Kokkos::max(cons_rho, 1.0e-20);
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -86,16 +84,16 @@ parthenon::Real ComputeHeatingFraction(
     const parthenon::Real rho, const parthenon::Real energy,
     const parthenon::Real bsq, const parthenon::Real electron_entropy,
     const parthenon::Real fel_constant) {
-  constexpr parthenon::Real kSmall = 1.0e-20;
+  
   constexpr parthenon::Real kElectronMass = 9.1093826e-28;
   constexpr parthenon::Real kProtonMass = 1.67262171e-24;
-  const parthenon::Real rho_safe = Kokkos::max(rho, kSmall);
-  const parthenon::Real bsq_safe = Kokkos::max(bsq, kSmall);
-  const parthenon::Real energy_safe = Kokkos::max(energy, kSmall);
-  const parthenon::Real tpr =
-      Kokkos::max((gamma_p - 1.0) * energy_safe / rho_safe, kSmall);
-  const parthenon::Real tel = Kokkos::max(
-      electron_entropy * Kokkos::pow(rho_safe, gamma_e - 1.0), kSmall);
+    const parthenon::Real rho_safe = Kokkos::max(rho, 1.0e-20);
+    const parthenon::Real bsq_safe = Kokkos::max(bsq, 1.0e-20);
+    const parthenon::Real energy_safe = Kokkos::max(energy, 1.0e-20);
+    const parthenon::Real tpr =
+      Kokkos::max((gamma_p - 1.0) * energy_safe / rho_safe, 1.0e-20);
+    const parthenon::Real tel = Kokkos::max(
+      electron_entropy * Kokkos::pow(rho_safe, gamma_e - 1.0), 1.0e-20);
 
   parthenon::Real fel = fel_constant;
   if (heating_model == MODEL::HOWES) {
@@ -128,14 +126,14 @@ parthenon::Real ComputeHeatingFraction(
     const parthenon::Real pg = (gamma - 1.0) * energy_safe;
     const parthenon::Real beta = 2.0 * pres / bsq_safe;
     const parthenon::Real sigma = bsq_safe / (rho_safe + energy_safe + pg);
-    const parthenon::Real betamax = 0.25 / Kokkos::max(sigma, kSmall);
+    const parthenon::Real betamax = 0.25 / Kokkos::max(sigma, 1.0e-20);
     fel = 0.5 * Kokkos::exp(
                     -Kokkos::pow(1.0 - beta / betamax, 3.3) /
                     (1.0 + 1.2 * Kokkos::pow(sigma, 0.7)));
   } else if (heating_model == MODEL::SHARMA) {
     const parthenon::Real trat_inv = tel / tpr;
     const parthenon::Real qe_qi = 0.33 * Kokkos::sqrt(trat_inv);
-    fel = 1.0 / (1.0 + 1.0 / Kokkos::max(qe_qi, kSmall));
+    fel = 1.0 / (1.0 + 1.0 / Kokkos::max(qe_qi, 1.0e-20));
   }
   return fel;
 }
@@ -158,8 +156,7 @@ parthenon::Real ComputeModelElectronEntropy(
     const parthenon::Real ratio_max,
     const bool suppress_highb_heat,
     const bool enforce_positive_dissipation) {
-  constexpr parthenon::Real kSmall = 1.0e-20;
-  const parthenon::Real rho_safe = Kokkos::max(rho, kSmall);
+  const parthenon::Real rho_safe = Kokkos::max(rho, 1.0e-20);
   const parthenon::Real fel = ComputeHeatingFraction(
       heating_model, gamma, gamma_p, gamma_e, rho_safe, energy, bsq,
       advected_electron_entropy, fel_constant);
@@ -195,8 +192,7 @@ parthenon::Real ClampElectronEntropyByRatio(const parthenon::Real total_entropy,
                                             const parthenon::Real electron_entropy,
                                             const parthenon::Real ratio_min,
                                             const parthenon::Real ratio_max) {
-  constexpr parthenon::Real kSmall = 1.0e-20;
-  const parthenon::Real rmin = Kokkos::max(ratio_min, kSmall);
+  const parthenon::Real rmin = Kokkos::max(ratio_min, 1.0e-20);
   const parthenon::Real rmax = Kokkos::max(ratio_max, rmin);
 
   const parthenon::Real kel_low = total_entropy / (1.0 + rmax);

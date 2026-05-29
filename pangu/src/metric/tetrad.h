@@ -4,7 +4,7 @@
 #ifndef PANGU_SRC_METRIC_TETRAD_H
 #define PANGU_SRC_METRIC_TETRAD_H
 
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 #include "initialization/variable_mnemonics.h"
 
 struct Tetrad {

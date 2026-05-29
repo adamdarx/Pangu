@@ -1,0 +1,530 @@
+[run.sh] Executable: /home/adamdarx/Pangu/build/pangu/src/pangu.cuda
+[run.sh] Input: /home/adamdarx/Pangu/pangu/problem/fm_torus_cks/inputfile
+[run.sh] Run dir: /home/adamdarx/Pangu/data/fm_torus_cks
+Maximum initial density: 1.771386e+01
+Maximum initial energy: 1.873922e-01
+Maximum initial magnetic bsq: 7.806797e-02
+Target beta: 1.000000e+02, beta_min: 1.806776e-01, magnetic normalization: 4.250618e-02
+### PARTHENON WARNING
+  Message:     The following input parameters are set but unused:
+electrons/on
+metric/h
+
+
+  File:        /home/adamdarx/Pangu/parthenon/src/parameter_input.cpp
+  Line number: 1015
+# Variables in use:
+# Package: parthenon::resolved_state
+# ---------------------------------------------------
+# Variables:
+# Name	Metadata flags
+# ---------------------------------------------------
+electric_field            Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+covariant_metric          Cell,Provides,Real,Derived,metric,parthenon::resolved_state
+contravariant_metric      Cell,Provides,Real,Derived,metric,parthenon::resolved_state
+connection                Cell,Provides,Real,Derived,metric,parthenon::resolved_state
+metric_determinant        Cell,Provides,Real,Derived,metric,parthenon::resolved_state
+weighted_velocity         Cell,Provides,Vector,Real,Derived,FillGhost,core,parthenon::resolved_state
+density                   Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+alfven                    Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+bnd_flux::conservative    Face,Provides,Real,Derived,OneCopy,Flux,CellMemAligned,parthenon::resolved_state
+entropy                   Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+conservative              Cell,Provides,Real,Independent,WithFluxes,core,parthenon::resolved_state
+energy                    Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+electron_entropy          Cell,Provides,Real,Derived,FillGhost,core,parthenon::resolved_state
+magnetic_field            Cell,Provides,Vector,Real,Derived,FillGhost,core,parthenon::resolved_state
+flag                      Cell,Provides,Real,Derived,core,parthenon::resolved_state
+# ---------------------------------------------------
+# Sparse Variables:
+# Name	sparse id	Metadata flags
+# ---------------------------------------------------
+# ---------------------------------------------------
+# Swarms:
+# Swarm	Value	metadata
+# ---------------------------------------------------
+
+
+Setup complete, executing driver...
+
+cycle=0 time=0.0000000000000000e+00 dt=1.0000000000000001e-05 zone-cycles/wsec_step=0.00e+00 wsec_total=5.55e-01 wsec_step=4.04e+00
+-------------- New Mesh structure after (de)refinement -------------
+Number of Trees = 1
+Total number of MeshBlocks = 232
+Number of physical refinement levels = 3
+Number of logical  refinement levels = 5
+  Physical level = 0 (logical level = 2): 56 MeshBlocks, cost = 56
+  Physical level = 1 (logical level = 3): 56 MeshBlocks, cost = 56
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+--------------------------------------------------------------------
+cycle=1 time=1.0000000000000001e-05 dt=1.3000000000000001e-05 zone-cycles/wsec_step=2.83e+04 wsec_total=3.41e+01 wsec_step=3.36e+01
+cycle=2 time=2.3000000000000003e-05 dt=1.6900000000000001e-05 zone-cycles/wsec_step=7.34e+05 wsec_total=3.54e+01 wsec_step=1.29e+00
+cycle=3 time=3.9900000000000008e-05 dt=2.1970000000000001e-05 zone-cycles/wsec_step=7.85e+05 wsec_total=3.66e+01 wsec_step=1.21e+00
+cycle=4 time=6.1870000000000002e-05 dt=2.8561000000000003e-05 zone-cycles/wsec_step=7.73e+05 wsec_total=3.79e+01 wsec_step=1.23e+00
+cycle=5 time=9.0431000000000002e-05 dt=3.7129300000000004e-05 zone-cycles/wsec_step=7.65e+05 wsec_total=3.91e+01 wsec_step=1.24e+00
+cycle=6 time=1.2756030000000000e-04 dt=4.8268090000000006e-05 zone-cycles/wsec_step=8.02e+05 wsec_total=4.03e+01 wsec_step=1.18e+00
+cycle=7 time=1.7582839000000001e-04 dt=6.2748517000000011e-05 zone-cycles/wsec_step=7.85e+05 wsec_total=4.15e+01 wsec_step=1.21e+00
+cycle=8 time=2.3857690700000001e-04 dt=8.1573072100000015e-05 zone-cycles/wsec_step=8.09e+05 wsec_total=4.27e+01 wsec_step=1.17e+00
+cycle=9 time=3.2014997910000001e-04 dt=1.0604499373000002e-04 zone-cycles/wsec_step=8.52e+05 wsec_total=4.38e+01 wsec_step=1.11e+00
+cycle=10 time=4.2619497283000001e-04 dt=1.3785849184900004e-04 zone-cycles/wsec_step=8.17e+05 wsec_total=4.50e+01 wsec_step=1.16e+00
+cycle=11 time=5.6405346467900005e-04 dt=1.7921603940370006e-04 zone-cycles/wsec_step=8.13e+05 wsec_total=4.61e+01 wsec_step=1.17e+00
+cycle=12 time=7.4326950408270013e-04 dt=2.3298085122481008e-04 zone-cycles/wsec_step=2.60e+05 wsec_total=4.98e+01 wsec_step=3.66e+00
+cycle=13 time=9.7625035530751021e-04 dt=3.0287510659225312e-04 zone-cycles/wsec_step=8.45e+05 wsec_total=5.09e+01 wsec_step=1.12e+00
+cycle=14 time=1.2791254618997633e-03 dt=3.9373763856992905e-04 zone-cycles/wsec_step=8.12e+05 wsec_total=5.21e+01 wsec_step=1.17e+00
+cycle=15 time=1.6728631004696924e-03 dt=5.1185893014090778e-04 zone-cycles/wsec_step=7.58e+05 wsec_total=5.33e+01 wsec_step=1.25e+00
+cycle=16 time=2.1847220306106000e-03 dt=6.6541660918318019e-04 zone-cycles/wsec_step=7.70e+05 wsec_total=5.46e+01 wsec_step=1.23e+00
+cycle=17 time=2.8501386397937803e-03 dt=8.6504159193813424e-04 zone-cycles/wsec_step=7.79e+05 wsec_total=5.58e+01 wsec_step=1.22e+00
+cycle=18 time=3.7151802317319147e-03 dt=1.1245540695195746e-03 zone-cycles/wsec_step=7.99e+05 wsec_total=5.70e+01 wsec_step=1.19e+00
+cycle=19 time=4.8397343012514891e-03 dt=1.4619202903754470e-03 zone-cycles/wsec_step=7.80e+05 wsec_total=5.82e+01 wsec_step=1.22e+00
+cycle=20 time=6.3016545916269361e-03 dt=1.9004963774880812e-03 zone-cycles/wsec_step=7.84e+05 wsec_total=5.94e+01 wsec_step=1.21e+00
+cycle=21 time=8.2021509691150175e-03 dt=2.4706452907345055e-03 zone-cycles/wsec_step=8.38e+05 wsec_total=6.05e+01 wsec_step=1.13e+00
+cycle=22 time=1.0672796259849522e-02 dt=3.2118388779548571e-03 zone-cycles/wsec_step=7.83e+05 wsec_total=6.18e+01 wsec_step=1.21e+00
+cycle=23 time=1.3884635137804378e-02 dt=4.1753905413413140e-03 zone-cycles/wsec_step=8.32e+05 wsec_total=6.29e+01 wsec_step=1.14e+00
+cycle=24 time=1.8060025679145691e-02 dt=5.4280077037437086e-03 zone-cycles/wsec_step=7.30e+05 wsec_total=6.42e+01 wsec_step=1.30e+00
+cycle=25 time=2.3488033382889399e-02 dt=7.0564100148668213e-03 zone-cycles/wsec_step=8.31e+05 wsec_total=6.53e+01 wsec_step=1.14e+00
+cycle=26 time=3.0544443397756221e-02 dt=9.1733330193268688e-03 zone-cycles/wsec_step=8.02e+05 wsec_total=6.65e+01 wsec_step=1.18e+00
+cycle=27 time=3.9717776417083087e-02 dt=1.1925332925124930e-02 zone-cycles/wsec_step=7.98e+05 wsec_total=6.77e+01 wsec_step=1.19e+00
+cycle=28 time=5.1643109342208018e-02 dt=1.5502932802662409e-02 zone-cycles/wsec_step=7.04e+05 wsec_total=6.91e+01 wsec_step=1.35e+00
+cycle=29 time=6.7146042144870424e-02 dt=2.0153812643461132e-02 zone-cycles/wsec_step=7.84e+05 wsec_total=7.03e+01 wsec_step=1.21e+00
+cycle=30 time=8.7299854788331549e-02 dt=2.6199956436499472e-02 zone-cycles/wsec_step=7.58e+05 wsec_total=7.15e+01 wsec_step=1.25e+00
+cycle=31 time=1.1349981122483102e-01 dt=3.4059943367449316e-02 zone-cycles/wsec_step=7.08e+05 wsec_total=7.29e+01 wsec_step=1.34e+00
+cycle=32 time=1.4755975459228032e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.48e+05 wsec_total=7.41e+01 wsec_step=1.27e+00
+cycle=33 time=1.8636972357740877e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.62e+05 wsec_total=7.54e+01 wsec_step=1.25e+00
+cycle=34 time=2.2517969256253723e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.46e+05 wsec_total=7.67e+01 wsec_step=1.27e+00
+cycle=35 time=2.6398966154766568e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.88e+05 wsec_total=7.79e+01 wsec_step=1.21e+00
+cycle=36 time=3.0279963053279413e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.10e+05 wsec_total=7.92e+01 wsec_step=1.34e+00
+cycle=37 time=3.4160959951792258e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.52e+05 wsec_total=8.05e+01 wsec_step=1.26e+00
+cycle=38 time=3.8041956850305103e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=2.35e+05 wsec_total=8.45e+01 wsec_step=4.04e+00
+cycle=39 time=4.1922953748817948e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.14e+05 wsec_total=8.58e+01 wsec_step=1.33e+00
+cycle=40 time=4.5803950647330793e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.24e+05 wsec_total=8.72e+01 wsec_step=1.31e+00
+cycle=41 time=4.9684947545843638e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.21e+05 wsec_total=8.85e+01 wsec_step=1.32e+00
+cycle=42 time=5.3565944444356484e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.34e+05 wsec_total=9.00e+01 wsec_step=1.50e+00
+cycle=43 time=5.7446941342869329e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.23e+05 wsec_total=9.13e+01 wsec_step=1.31e+00
+cycle=44 time=6.1327938241382174e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.35e+05 wsec_total=9.26e+01 wsec_step=1.29e+00
+cycle=45 time=6.5208935139895019e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.98e+05 wsec_total=9.38e+01 wsec_step=1.19e+00
+cycle=46 time=6.9089932038407864e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.46e+05 wsec_total=9.50e+01 wsec_step=1.27e+00
+cycle=47 time=7.2970928936920709e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.40e+05 wsec_total=9.63e+01 wsec_step=1.28e+00
+cycle=48 time=7.6851925835433554e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.71e+05 wsec_total=9.76e+01 wsec_step=1.23e+00
+cycle=49 time=8.0732922733946400e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.57e+05 wsec_total=9.88e+01 wsec_step=1.26e+00
+cycle=50 time=8.4613919632459245e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.24e+05 wsec_total=1.00e+02 wsec_step=1.15e+00
+cycle=51 time=8.8494916530972090e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.03e+05 wsec_total=1.01e+02 wsec_step=1.18e+00
+cycle=52 time=9.2375913429484935e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.70e+05 wsec_total=1.02e+02 wsec_step=1.23e+00
+cycle=53 time=9.6256910327997780e-01 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.93e+05 wsec_total=1.04e+02 wsec_step=1.20e+00
+cycle=54 time=1.0013790722651064e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.95e+05 wsec_total=1.05e+02 wsec_step=1.37e+00
+cycle=55 time=1.0401890412502348e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.46e+05 wsec_total=1.06e+02 wsec_step=1.12e+00
+cycle=56 time=1.0789990102353633e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.84e+05 wsec_total=1.07e+02 wsec_step=1.21e+00
+cycle=57 time=1.1178089792204917e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.68e+05 wsec_total=1.09e+02 wsec_step=1.24e+00
+cycle=58 time=1.1566189482056202e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.14e+05 wsec_total=1.10e+02 wsec_step=1.33e+00
+cycle=59 time=1.1954289171907486e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.51e+05 wsec_total=1.11e+02 wsec_step=1.26e+00
+cycle=60 time=1.2342388861758771e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.45e+05 wsec_total=1.12e+02 wsec_step=1.28e+00
+cycle=61 time=1.2730488551610055e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.24e+05 wsec_total=1.14e+02 wsec_step=1.15e+00
+cycle=62 time=1.3118588241461340e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.33e+05 wsec_total=1.15e+02 wsec_step=1.30e+00
+cycle=63 time=1.3506687931312624e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.62e+05 wsec_total=1.16e+02 wsec_step=1.25e+00
+cycle=64 time=1.3894787621163909e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=2.61e+05 wsec_total=1.20e+02 wsec_step=3.64e+00
+cycle=65 time=1.4282887311015193e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.47e+05 wsec_total=1.21e+02 wsec_step=1.27e+00
+cycle=66 time=1.4670987000866478e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.48e+05 wsec_total=1.22e+02 wsec_step=1.27e+00
+cycle=67 time=1.5059086690717762e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.45e+05 wsec_total=1.24e+02 wsec_step=1.27e+00
+cycle=68 time=1.5447186380569047e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.47e+05 wsec_total=1.25e+02 wsec_step=1.27e+00
+cycle=69 time=1.5835286070420331e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.88e+05 wsec_total=1.26e+02 wsec_step=1.21e+00
+cycle=70 time=1.6223385760271616e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.36e+05 wsec_total=1.27e+02 wsec_step=1.29e+00
+cycle=71 time=1.6611485450122900e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.68e+05 wsec_total=1.29e+02 wsec_step=1.24e+00
+cycle=72 time=1.6999585139974185e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.93e+05 wsec_total=1.30e+02 wsec_step=1.20e+00
+cycle=73 time=1.7387684829825469e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.38e+05 wsec_total=1.31e+02 wsec_step=1.29e+00
+cycle=74 time=1.7775784519676754e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.14e+05 wsec_total=1.32e+02 wsec_step=1.33e+00
+cycle=75 time=1.8163884209528038e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.47e+05 wsec_total=1.34e+02 wsec_step=1.27e+00
+cycle=76 time=1.8551983899379323e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.64e+05 wsec_total=1.35e+02 wsec_step=1.24e+00
+cycle=77 time=1.8940083589230607e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.86e+05 wsec_total=1.36e+02 wsec_step=1.21e+00
+cycle=78 time=1.9328183279081892e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.93e+05 wsec_total=1.37e+02 wsec_step=1.37e+00
+cycle=79 time=1.9716282968933176e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.98e+05 wsec_total=1.39e+02 wsec_step=1.19e+00
+cycle=80 time=2.0104382658784461e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.38e+05 wsec_total=1.40e+02 wsec_step=1.29e+00
+cycle=81 time=2.0492482348635748e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.22e+05 wsec_total=1.41e+02 wsec_step=1.16e+00
+cycle=82 time=2.0880582038487034e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.61e+05 wsec_total=1.42e+02 wsec_step=1.25e+00
+cycle=83 time=2.1268681728338321e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.04e+05 wsec_total=1.44e+02 wsec_step=1.35e+00
+cycle=84 time=2.1656781418189608e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.43e+05 wsec_total=1.45e+02 wsec_step=1.28e+00
+cycle=85 time=2.2044881108040895e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.05e+05 wsec_total=1.46e+02 wsec_step=1.35e+00
+cycle=86 time=2.2432980797892181e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.89e+05 wsec_total=1.48e+02 wsec_step=1.38e+00
+cycle=87 time=2.2821080487743468e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.35e+05 wsec_total=1.49e+02 wsec_step=1.29e+00
+cycle=88 time=2.3209180177594755e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.91e+05 wsec_total=1.50e+02 wsec_step=1.37e+00
+cycle=89 time=2.3597279867446042e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=2.36e+05 wsec_total=1.54e+02 wsec_step=4.02e+00
+cycle=90 time=2.3985379557297328e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.11e+05 wsec_total=1.56e+02 wsec_step=1.34e+00
+cycle=91 time=2.4373479247148615e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.57e+05 wsec_total=1.57e+02 wsec_step=1.45e+00
+cycle=92 time=2.4761578936999902e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.04e+05 wsec_total=1.59e+02 wsec_step=1.35e+00
+cycle=93 time=2.5149678626851188e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.72e+05 wsec_total=1.60e+02 wsec_step=1.41e+00
+cycle=94 time=2.5537778316702475e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.67e+05 wsec_total=1.61e+02 wsec_step=1.24e+00
+cycle=95 time=2.5925878006553762e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=8.09e+05 wsec_total=1.62e+02 wsec_step=1.17e+00
+cycle=96 time=2.6313977696405049e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.35e+05 wsec_total=1.64e+02 wsec_step=1.29e+00
+cycle=97 time=2.6702077386256335e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.58e+05 wsec_total=1.65e+02 wsec_step=1.25e+00
+cycle=98 time=2.7090177076107622e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.97e+05 wsec_total=1.66e+02 wsec_step=1.36e+00
+cycle=99 time=2.7478276765958909e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=7.35e+05 wsec_total=1.68e+02 wsec_step=1.29e+00
+cycle=100 time=2.7866376455810196e+00 dt=3.8809968985128465e-02 zone-cycles/wsec_step=6.86e+05 wsec_total=1.69e+02 wsec_step=1.39e+00
+
+Driver completed.
+time=2.79e+00 cycle=100
+tlim=2.00e+02 nlim=100
+
+walltime used = 1.69e+02
+zone-cycles/wallsecond = 5.62e+05
+
+BEGIN KOKKOS PROFILING REPORT:
+TOTAL TIME: 1.74e+02 seconds
+TOP-DOWN TIME TREE:
+<average time> <percent of total time> <percent time in Kokkos> <percent MPI imbalance> <remainder> <kernels per second> <number of calls> <name> [type]
+===================
+|-> 1.68e+02 sec 96.8% 71.6% 0.0% 0.0% 4.38e+03 1 driver.cpp::148::Execute [region]
+|   |-> 1.66e+02 sec 95.5% 72.7% 0.0% 5.9% 4.45e+03 100 multistage.hpp::40::Step [region]
+|   |   |-> 3.18e+01 sec 18.3% 87.3% 0.0% 11.2% 4.42e+03 46400 laxf.cc::22::CalculateLAXF [region]
+|   |   |   |-> 1.28e+01 sec 7.3% 100.0% 0.0% ------ 46400 laxf.cc::215::CalculateLAXF [for]
+|   |   |   |-> 7.94e+00 sec 4.6% 100.0% 0.0% ------ 46400 laxf.cc::141::CalculateLAXF [for]
+|   |   |   |-> 7.00e+00 sec 4.0% 100.0% 0.0% ------ 46400 laxf.cc::68::CalculateLAXF [for]
+|   |   |   |-> 4.68e-01 sec 0.3% 0.0% 0.0% 100.0% 0.00e+00 185600 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 1.91e+01 sec 11.0% 95.6% 0.0% 4.4% 4.24e+01 400 boundary_communication.cpp::273::SetBounds [region]
+|   |   |   |-> 1.52e+01 sec 8.8% 100.0% 0.0% ------ 400 boundary_communication.cpp::295::SetBounds [for]
+|   |   |   |-> 2.03e+00 sec 1.2% 99.8% 0.0% 0.2% 1.97e+02 400 pr_loops.hpp::116::ProlongationRestrictionLoop [region]
+|   |   |   |   |-> 2.03e+00 sec 1.2% 100.0% 0.0% ------ 400 pr_loops.hpp::127::ProlongationRestrictionLoop [for]
+|   |   |   |-> 7.38e-01 sec 0.4% 100.0% 0.0% ------ 3 Kokkos::View::initialization [prores_info] [for]
+|   |   |   |-> 2.87e-01 sec 0.2% 100.0% 0.0% ------ 3 Kokkos::View::initialization [bnd_info] [for]
+|   |   |-> 1.72e+01 sec 9.9% 56.4% 0.0% 42.2% 1.10e+04 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|   |   |   |-> 3.78e+00 sec 2.2% 100.0% 0.0% ------ 46400 constrained_transport.cc::82::ConstraintedTransport [for]
+|   |   |   |-> 2.09e+00 sec 1.2% 100.0% 0.0% ------ 46400 constrained_transport.cc::54::ConstraintedTransport [for]
+|   |   |   |-> 1.89e+00 sec 1.1% 100.0% 0.0% ------ 46400 constrained_transport.cc::98::ConstraintedTransport [for]
+|   |   |   |-> 1.82e+00 sec 1.0% 100.0% 0.0% ------ 46400 constrained_transport.cc::114::ConstraintedTransport [for]
+|   |   |   |-> 2.43e-01 sec 0.1% 0.0% 0.0% 100.0% 0.00e+00 139200 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 1.56e+01 sec 9.0% 93.7% 0.0% 6.3% 5.23e+01 400 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|   |   |   |-> 1.22e+01 sec 7.0% 100.0% 0.0% ------ 400 boundary_communication.cpp::105::SendBoundBufsWithRestrictOption [for]
+|   |   |   |-> 1.26e+00 sec 0.7% 99.6% 0.0% 0.4% 3.18e+02 400 pr_loops.hpp::116::ProlongationRestrictionLoop [region]
+|   |   |   |   |-> 1.25e+00 sec 0.7% 100.0% 0.0% ------ 400 pr_loops.hpp::127::ProlongationRestrictionLoop [for]
+|   |   |   |-> 7.91e-01 sec 0.5% 100.0% 0.0% ------ 3 Kokkos::View::initialization [prores_info] [for]
+|   |   |   |-> 3.55e-01 sec 0.2% 100.0% 0.0% ------ 3 Kokkos::View::initialization [bnd_info] [for]
+|   |   |-> 1.40e+01 sec 8.0% 37.7% 0.0% 59.7% 3.63e+03 46400 source_term.cc::20::AddGeometricSource [region]
+|   |   |   |-> 4.99e+00 sec 2.9% 100.0% 0.0% ------ 46400 source_term.cc::53::AddGeometricSource [for]
+|   |   |   |-> 3.61e-01 sec 0.2% 0.0% 0.0% 100.0% 0.00e+00 139200 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 1.07e+01 sec 6.1% 91.1% 0.0% 5.9% 4.34e+03 46400 invertor.cc::20::Recovery [region]
+|   |   |   |-> 9.73e+00 sec 5.6% 100.0% 0.0% ------ 46400 invertor.cc::51::Recovery [for]
+|   |   |   |-> 3.17e-01 sec 0.2% 0.0% 0.0% 100.0% 0.00e+00 92800 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 8.44e+00 sec 4.9% 61.3% 0.0% 34.3% 5.83e+03 46400 conservative.cc::19::CalculateConservative [region]
+|   |   |   |-> 5.06e+00 sec 2.9% 100.0% 0.0% ------ 46400 conservative.cc::51::CalculateConservative [for]
+|   |   |   |-> 3.70e-01 sec 0.2% 0.0% 0.0% 100.0% 0.00e+00 139200 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 7.88e+00 sec 4.5% 58.0% 0.0% 38.8% 4.38e+02 200 update.hpp::74::WeightedSumData [region]
+|   |   |   |-> 4.39e+00 sec 2.5% 100.0% 0.0% ------ 200 update.hpp::79::WeightedSumData [for]
+|   |   |   |-> 2.51e-01 sec 0.1% 0.0% 0.0% 100.0% 0.00e+00 139664 meshblock_data.cpp::347::GetVariablesByFlag [region]
+|   |   |-> 7.18e+00 sec 4.1% 90.3% 0.0% 6.3% 6.46e+03 46400 primitive_fixer.cc::19::FixPrimitive [region]
+|   |   |   |-> 6.48e+00 sec 3.7% 100.0% 0.0% ------ 46400 primitive_fixer.cc::52::FixPrimitive [for]
+|   |   |   |-> 2.47e-01 sec 0.1% 0.0% 0.0% 100.0% 0.00e+00 46400 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 6.22e+00 sec 3.6% 85.7% 0.0% 9.4% 7.46e+03 46400 electron_heating.cc::18::ApplyElectronHeating [region]
+|   |   |   |-> 5.33e+00 sec 3.1% 100.0% 0.0% ------ 46400 electron_heating.cc::56::ApplyElectronHeating [for]
+|   |   |   |-> 3.03e-01 sec 0.2% 0.0% 0.0% 100.0% 0.00e+00 92800 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 3.56e+00 sec 2.0% 91.7% 0.0% 7.0% 1.96e+04 23200 update.hpp::271::EstimateTimestep [region]
+|   |   |   |-> 1.09e+00 sec 0.6% 100.0% 0.0% ------ 23200 timestep_estimation.cc::73::EstimateTimestepBlock [reduce]
+|   |   |   |-> 1.09e+00 sec 0.6% 100.0% 0.0% ------ 23200 timestep_estimation.cc::62::EstimateTimestepBlock [reduce]
+|   |   |   |-> 1.08e+00 sec 0.6% 100.0% 0.0% ------ 23200 timestep_estimation.cc::51::EstimateTimestepBlock [reduce]
+|   |   |-> 3.53e+00 sec 2.0% 59.2% 0.0% 40.8% 1.11e+04 139200 boundary_conditions.cpp::38::ApplyBoundaryConditionsOnCoarseOrFine [region]
+|   |   |   |-> 2.05e+00 sec 1.2% 100.0% 0.0% ------ 38400 boundary_conditions_generic.hpp::207::GenericBC [for]
+|   |   |-> 2.91e+00 sec 1.7% 100.0% 0.0% ------ 200 update.cpp::75::FluxDivergence<parthenon::MeshData<double> > [for]
+|   |   |-> 2.47e+00 sec 1.4% 89.4% 0.0% 10.4% 1.62e+02 200 boundary_communication.cpp::384::ProlongateBounds [region]
+|   |   |   |-> 2.21e+00 sec 1.3% 99.8% 0.0% 0.2% 1.81e+02 400 pr_loops.hpp::116::ProlongationRestrictionLoop [region]
+|   |   |       |-> 2.21e+00 sec 1.3% 100.0% 0.0% ------ 400 pr_loops.hpp::127::ProlongationRestrictionLoop [for]
+|   |   |-> 2.25e+00 sec 1.3% 74.8% 0.0% 16.6% 2.06e+04 46400 recovery_fixer.cc::16::FixRecovery [region]
+|   |   |   |-> 1.68e+00 sec 1.0% 100.0% 0.0% ------ 46400 recovery_fixer.cc::38::FixRecovery [for]
+|   |   |   |-> 1.93e-01 sec 0.1% 0.0% 0.0% 100.0% 0.00e+00 46400 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |   |-> 8.10e-01 sec 0.5% 0.0% 0.0% 100.0% 0.00e+00 140360 meshblock_data.cpp::347::GetVariablesByFlag [region]
+|   |   |-> 6.71e-01 sec 0.4% 30.5% 0.0% 69.2% 2.98e+02 200 boundary_communication.cpp::424::ProlongateInternalBounds [region]
+|   |   |   |-> 2.07e-01 sec 0.1% 99.1% 0.0% 0.9% 9.67e+02 200 pr_loops.hpp::116::ProlongationRestrictionLoop [region]
+|   |   |       |-> 2.05e-01 sec 0.1% 100.0% 0.0% ------ 200 pr_loops.hpp::127::ProlongationRestrictionLoop [for]
+|   |   |-> 3.01e-01 sec 0.2% 100.0% 0.0% ------ 464 Kokkos::View::initialization [connection] via memset [for]
+|   |   |-> 2.56e-01 sec 0.1% 100.0% 0.0% ------ 464 Kokkos::View::initialization [contravariant_metric] via memset [for]
+|   |   |-> 2.31e-01 sec 0.1% 0.0% 0.0% 58.8% 0.00e+00 46400 update.hpp::293::FillDerived [region]
+|   |   |-> 1.82e-01 sec 0.1% 100.0% 0.0% ------ 464 Kokkos::View::initialization [covariant_metric] via memset [for]
+|   |-> 2.38e+00 sec 1.4% 0.0% 0.0% 3.9% 0.00e+00 99 outputs.cpp::430::MakeOutputs [region]
+|   |   |-> 2.29e+00 sec 1.3% 0.0% 0.0% 1.3% 0.00e+00 27 PHDF5::WriteOutputFileRealPrec [region]
+|   |       |-> 1.97e+00 sec 1.1% 0.0% 0.0% 1.5% 0.00e+00 27 write all variable data [region]
+|   |       |   |-> 1.94e+00 sec 1.1% 0.0% 0.0% 3.9% 0.00e+00 81 write variable loop [region]
+|   |       |       |-> 1.21e+00 sec 0.7% 0.0% 0.0% 100.0% 0.00e+00 81 fill host output buffer [region]
+|   |       |       |-> 6.52e-01 sec 0.4% 0.0% 0.0% 100.0% 0.00e+00 81 write variable data [region]
+|   |       |-> 2.49e-01 sec 0.1% 0.0% 0.0% 100.0% 0.00e+00 27 genXDMF [region]
+|-> 1.38e+00 sec 0.8% 43.0% 0.0% 26.6% 4.06e+03 1 mesh.cpp::717::Initialize [region]
+|   |-> 3.31e-01 sec 0.2% 100.0% 0.0% ------ 232 problem_generator.cpp::180::ProblemGenerator [for]
+|   |-> 2.27e-01 sec 0.1% 14.4% 0.0% 85.6% 3.14e+03 464 boundary_conditions.cpp::38::ApplyBoundaryConditionsOnCoarseOrFine [region]
+|-> 4.69e-01 sec 0.3% 13.9% 0.0% 86.0% 4.95e+03 233 update.hpp::271::EstimateTimestep [region]
+|-> 1.75e-01 sec 0.1% 0.0% 0.0% 5.6% 0.00e+00 2 outputs.cpp::430::MakeOutputs [region]
+
+BOTTOM-UP TIME TREE:
+<average time> <percent of total time> <percent time in Kokkos> <percent MPI imbalance> <number of calls> <name> [type]
+===================
+|-> 1.52e+01 sec 8.8% 100.0% 0.0% ------ 401 boundary_communication.cpp::295::SetBounds [for]
+|   |-> 1.52e+01 sec 8.8% 100.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::273::SetBounds [region]
+|       |-> 1.52e+01 sec 8.8% 100.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|       |   |-> 1.52e+01 sec 8.8% 100.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|-> 1.28e+01 sec 7.3% 100.0% 0.0% ------ 46400 laxf.cc::215::CalculateLAXF [for]
+|   |-> 1.28e+01 sec 7.3% 100.0% 0.0% 0.0% 0.00e+00 46400 laxf.cc::22::CalculateLAXF [region]
+|       |-> 1.28e+01 sec 7.3% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 1.28e+01 sec 7.3% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 1.22e+01 sec 7.0% 100.0% 0.0% ------ 401 boundary_communication.cpp::105::SendBoundBufsWithRestrictOption [for]
+|   |-> 1.22e+01 sec 7.0% 100.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|       |-> 1.22e+01 sec 7.0% 100.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|       |   |-> 1.22e+01 sec 7.0% 100.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|-> 9.85e+00 sec 5.7% 0.0% 0.0% 0.0% 0.00e+00 100 multistage.hpp::40::Step [region]
+|   |-> 9.85e+00 sec 5.7% 0.0% 0.0% 0.0% 0.00e+00 100 driver.cpp::148::Execute [region]
+|-> 9.73e+00 sec 5.6% 100.0% 0.0% ------ 46400 invertor.cc::51::Recovery [for]
+|   |-> 9.73e+00 sec 5.6% 100.0% 0.0% 0.0% 0.00e+00 46400 invertor.cc::20::Recovery [region]
+|       |-> 9.73e+00 sec 5.6% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 9.73e+00 sec 5.6% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 8.35e+00 sec 4.8% 0.0% 0.0% 0.0% 0.00e+00 46400 source_term.cc::20::AddGeometricSource [region]
+|   |-> 8.35e+00 sec 4.8% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 8.35e+00 sec 4.8% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 7.94e+00 sec 4.6% 100.0% 0.0% ------ 46400 laxf.cc::141::CalculateLAXF [for]
+|   |-> 7.94e+00 sec 4.6% 100.0% 0.0% 0.0% 0.00e+00 46400 laxf.cc::22::CalculateLAXF [region]
+|       |-> 7.94e+00 sec 4.6% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 7.94e+00 sec 4.6% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 7.27e+00 sec 4.2% 0.0% 0.0% 0.0% 0.00e+00 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|   |-> 7.27e+00 sec 4.2% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 7.27e+00 sec 4.2% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 7.00e+00 sec 4.0% 100.0% 0.0% ------ 46400 laxf.cc::68::CalculateLAXF [for]
+|   |-> 7.00e+00 sec 4.0% 100.0% 0.0% 0.0% 0.00e+00 46400 laxf.cc::22::CalculateLAXF [region]
+|       |-> 7.00e+00 sec 4.0% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 7.00e+00 sec 4.0% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 6.48e+00 sec 3.7% 100.0% 0.0% ------ 46400 primitive_fixer.cc::52::FixPrimitive [for]
+|   |-> 6.48e+00 sec 3.7% 100.0% 0.0% 0.0% 0.00e+00 46400 primitive_fixer.cc::19::FixPrimitive [region]
+|       |-> 6.48e+00 sec 3.7% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 6.48e+00 sec 3.7% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 5.71e+00 sec 3.3% 100.0% 0.0% ------ 1405 pr_loops.hpp::127::ProlongationRestrictionLoop [for]
+|   |-> 5.71e+00 sec 3.3% 100.0% 0.0% 0.0% 0.00e+00 1405 pr_loops.hpp::116::ProlongationRestrictionLoop [region]
+|       |-> 2.21e+00 sec 1.3% 100.0% 0.0% 0.0% 0.00e+00 402 boundary_communication.cpp::384::ProlongateBounds [region]
+|       |   |-> 2.21e+00 sec 1.3% 100.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|       |   |   |-> 2.21e+00 sec 1.3% 100.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|       |-> 2.03e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::273::SetBounds [region]
+|       |   |-> 2.03e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|       |   |   |-> 2.03e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|       |-> 1.27e+00 sec 0.7% 100.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|       |   |-> 1.25e+00 sec 0.7% 100.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|       |   |   |-> 1.25e+00 sec 0.7% 100.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|       |-> 2.05e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 201 boundary_communication.cpp::424::ProlongateInternalBounds [region]
+|           |-> 2.05e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|           |   |-> 2.05e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 5.33e+00 sec 3.1% 100.0% 0.0% ------ 46400 electron_heating.cc::56::ApplyElectronHeating [for]
+|   |-> 5.33e+00 sec 3.1% 100.0% 0.0% 0.0% 0.00e+00 46400 electron_heating.cc::18::ApplyElectronHeating [region]
+|       |-> 5.33e+00 sec 3.1% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 5.33e+00 sec 3.1% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 5.06e+00 sec 2.9% 100.0% 0.0% ------ 46400 conservative.cc::51::CalculateConservative [for]
+|   |-> 5.06e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 conservative.cc::19::CalculateConservative [region]
+|       |-> 5.06e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 5.06e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 4.99e+00 sec 2.9% 100.0% 0.0% ------ 46400 source_term.cc::53::AddGeometricSource [for]
+|   |-> 4.99e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 source_term.cc::20::AddGeometricSource [region]
+|       |-> 4.99e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 4.99e+00 sec 2.9% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 4.39e+00 sec 2.5% 100.0% 0.0% ------ 200 update.hpp::79::WeightedSumData [for]
+|   |-> 4.39e+00 sec 2.5% 100.0% 0.0% 0.0% 0.00e+00 200 update.hpp::74::WeightedSumData [region]
+|       |-> 4.39e+00 sec 2.5% 100.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|           |-> 4.39e+00 sec 2.5% 100.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 3.78e+00 sec 2.2% 100.0% 0.0% ------ 46400 constrained_transport.cc::82::ConstraintedTransport [for]
+|   |-> 3.78e+00 sec 2.2% 100.0% 0.0% 0.0% 0.00e+00 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|       |-> 3.78e+00 sec 2.2% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 3.78e+00 sec 2.2% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 3.58e+00 sec 2.1% 0.0% 0.0% 0.0% 0.00e+00 46400 laxf.cc::22::CalculateLAXF [region]
+|   |-> 3.58e+00 sec 2.1% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 3.58e+00 sec 2.1% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 3.06e+00 sec 1.8% 0.0% 0.0% 0.0% 0.00e+00 200 update.hpp::74::WeightedSumData [region]
+|   |-> 3.06e+00 sec 1.8% 0.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|       |-> 3.06e+00 sec 1.8% 0.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 2.91e+00 sec 1.7% 100.0% 0.0% ------ 200 update.cpp::75::FluxDivergence<parthenon::MeshData<double> > [for]
+|   |-> 2.91e+00 sec 1.7% 100.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|       |-> 2.91e+00 sec 1.7% 100.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 2.90e+00 sec 1.7% 0.0% 0.0% 0.0% 0.00e+00 46400 conservative.cc::19::CalculateConservative [region]
+|   |-> 2.90e+00 sec 1.7% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 2.90e+00 sec 1.7% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 2.55e+00 sec 1.5% 0.0% 0.0% 0.0% 0.00e+00 906192 meshblock_data.cpp::290::GetVariablesByName [region]
+|   |-> 4.68e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 185600 laxf.cc::22::CalculateLAXF [region]
+|   |   |-> 4.68e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 185600 multistage.hpp::40::Step [region]
+|   |       |-> 4.68e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 185600 driver.cpp::148::Execute [region]
+|   |-> 3.70e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 conservative.cc::19::CalculateConservative [region]
+|   |   |-> 3.70e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 multistage.hpp::40::Step [region]
+|   |       |-> 3.70e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 driver.cpp::148::Execute [region]
+|   |-> 3.61e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 source_term.cc::20::AddGeometricSource [region]
+|   |   |-> 3.61e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 multistage.hpp::40::Step [region]
+|   |       |-> 3.61e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 139200 driver.cpp::148::Execute [region]
+|   |-> 3.17e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 invertor.cc::20::Recovery [region]
+|   |   |-> 3.17e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 multistage.hpp::40::Step [region]
+|   |       |-> 3.17e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 driver.cpp::148::Execute [region]
+|   |-> 3.03e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 electron_heating.cc::18::ApplyElectronHeating [region]
+|   |   |-> 3.03e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 multistage.hpp::40::Step [region]
+|   |       |-> 3.03e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 92800 driver.cpp::148::Execute [region]
+|   |-> 2.47e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 primitive_fixer.cc::19::FixPrimitive [region]
+|   |   |-> 2.47e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|   |       |-> 2.47e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|   |-> 2.43e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139200 constrained_transport.cc::17::ConstraintedTransport [region]
+|   |   |-> 2.43e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139200 multistage.hpp::40::Step [region]
+|   |       |-> 2.43e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139200 driver.cpp::148::Execute [region]
+|   |-> 1.93e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 recovery_fixer.cc::16::FixRecovery [region]
+|   |   |-> 1.93e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|   |       |-> 1.93e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 2.09e+00 sec 1.2% 100.0% 0.0% ------ 46400 constrained_transport.cc::54::ConstraintedTransport [for]
+|   |-> 2.09e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|       |-> 2.09e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 2.09e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 2.07e+00 sec 1.2% 100.0% 0.0% ------ 38496 boundary_conditions_generic.hpp::207::GenericBC [for]
+|   |-> 2.07e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 38496 boundary_conditions.cpp::38::ApplyBoundaryConditionsOnCoarseOrFine [region]
+|       |-> 2.05e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 38400 multistage.hpp::40::Step [region]
+|       |   |-> 2.05e+00 sec 1.2% 100.0% 0.0% 0.0% 0.00e+00 38400 driver.cpp::148::Execute [region]
+|-> 1.89e+00 sec 1.1% 100.0% 0.0% ------ 46400 constrained_transport.cc::98::ConstraintedTransport [for]
+|   |-> 1.89e+00 sec 1.1% 100.0% 0.0% 0.0% 0.00e+00 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|       |-> 1.89e+00 sec 1.1% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 1.89e+00 sec 1.1% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 1.82e+00 sec 1.0% 100.0% 0.0% ------ 46400 constrained_transport.cc::114::ConstraintedTransport [for]
+|   |-> 1.82e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 constrained_transport.cc::17::ConstraintedTransport [region]
+|       |-> 1.82e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 1.82e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 1.68e+00 sec 1.0% 100.0% 0.0% ------ 46400 recovery_fixer.cc::38::FixRecovery [for]
+|   |-> 1.68e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 recovery_fixer.cc::16::FixRecovery [region]
+|       |-> 1.68e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|           |-> 1.68e+00 sec 1.0% 100.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 1.63e+00 sec 0.9% 0.0% 0.0% 0.0% 0.00e+00 139664 boundary_conditions.cpp::38::ApplyBoundaryConditionsOnCoarseOrFine [region]
+|   |-> 1.44e+00 sec 0.8% 0.0% 0.0% 0.0% 0.00e+00 139200 multistage.hpp::40::Step [region]
+|   |   |-> 1.44e+00 sec 0.8% 0.0% 0.0% 0.0% 0.00e+00 139200 driver.cpp::148::Execute [region]
+|   |-> 1.94e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 464 mesh.cpp::717::Initialize [region]
+|-> 1.56e+00 sec 0.9% 100.0% 0.0% ------ 8 Kokkos::View::initialization [prores_info] [for]
+|   |-> 8.11e-01 sec 0.5% 100.0% 0.0% 0.0% 0.00e+00 4 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|   |   |-> 7.91e-01 sec 0.5% 100.0% 0.0% 0.0% 0.00e+00 3 multistage.hpp::40::Step [region]
+|   |   |   |-> 7.91e-01 sec 0.5% 100.0% 0.0% 0.0% 0.00e+00 3 driver.cpp::148::Execute [region]
+|   |-> 7.51e-01 sec 0.4% 100.0% 0.0% 0.0% 0.00e+00 4 boundary_communication.cpp::273::SetBounds [region]
+|       |-> 7.38e-01 sec 0.4% 100.0% 0.0% 0.0% 0.00e+00 3 multistage.hpp::40::Step [region]
+|       |   |-> 7.38e-01 sec 0.4% 100.0% 0.0% 0.0% 0.00e+00 3 driver.cpp::148::Execute [region]
+|-> 1.29e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 87 fill host output buffer [region]
+|   |-> 1.29e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 87 write variable loop [region]
+|       |-> 1.29e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 87 write all variable data [region]
+|           |-> 1.29e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 87 PHDF5::WriteOutputFileRealPrec [region]
+|               |-> 1.29e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 87 outputs.cpp::430::MakeOutputs [region]
+|                   |-> 1.21e+00 sec 0.7% 0.0% 0.0% 0.0% 0.00e+00 81 driver.cpp::148::Execute [region]
+|-> 1.10e+00 sec 0.6% 100.0% 0.0% ------ 23432 timestep_estimation.cc::73::EstimateTimestepBlock [reduce]
+|   |-> 1.10e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23432 update.hpp::271::EstimateTimestep [region]
+|       |-> 1.09e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 multistage.hpp::40::Step [region]
+|       |   |-> 1.09e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 driver.cpp::148::Execute [region]
+|-> 1.10e+00 sec 0.6% 100.0% 0.0% ------ 23432 timestep_estimation.cc::51::EstimateTimestepBlock [reduce]
+|   |-> 1.10e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23432 update.hpp::271::EstimateTimestep [region]
+|       |-> 1.08e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 multistage.hpp::40::Step [region]
+|       |   |-> 1.08e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 driver.cpp::148::Execute [region]
+|-> 1.10e+00 sec 0.6% 100.0% 0.0% ------ 23432 timestep_estimation.cc::62::EstimateTimestepBlock [reduce]
+|   |-> 1.10e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23432 update.hpp::271::EstimateTimestep [region]
+|       |-> 1.09e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 multistage.hpp::40::Step [region]
+|       |   |-> 1.09e+00 sec 0.6% 100.0% 0.0% 0.0% 0.00e+00 23200 driver.cpp::148::Execute [region]
+|-> 1.06e+00 sec 0.6% 0.0% 0.0% 0.0% 0.00e+00 280720 meshblock_data.cpp::347::GetVariablesByFlag [region]
+|   |-> 8.10e-01 sec 0.5% 0.0% 0.0% 0.0% 0.00e+00 140360 multistage.hpp::40::Step [region]
+|   |   |-> 8.10e-01 sec 0.5% 0.0% 0.0% 0.0% 0.00e+00 140360 driver.cpp::148::Execute [region]
+|   |-> 2.51e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139664 update.hpp::74::WeightedSumData [region]
+|   |   |-> 2.51e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139664 multistage.hpp::40::Step [region]
+|   |       |-> 2.51e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 139664 driver.cpp::148::Execute [region]
+|-> 1.06e+00 sec 0.6% 0.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|   |-> 9.79e-01 sec 0.6% 0.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|   |   |-> 9.79e-01 sec 0.6% 0.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|-> 9.18e-01 sec 0.5% 0.0% 0.0% 0.0% 0.00e+00 401 boundary_communication.cpp::273::SetBounds [region]
+|   |-> 8.41e-01 sec 0.5% 0.0% 0.0% 0.0% 0.00e+00 400 multistage.hpp::40::Step [region]
+|   |   |-> 8.41e-01 sec 0.5% 0.0% 0.0% 0.0% 0.00e+00 400 driver.cpp::148::Execute [region]
+|-> 6.97e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 87 write variable data [region]
+|   |-> 6.97e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 87 write variable loop [region]
+|       |-> 6.97e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 87 write all variable data [region]
+|           |-> 6.97e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 87 PHDF5::WriteOutputFileRealPrec [region]
+|               |-> 6.97e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 87 outputs.cpp::430::MakeOutputs [region]
+|                   |-> 6.52e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 81 driver.cpp::148::Execute [region]
+|-> 6.57e-01 sec 0.4% 100.0% 0.0% ------ 8 Kokkos::View::initialization [bnd_info] [for]
+|   |-> 3.68e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 4 boundary_communication.cpp::53::SendBoundBufsWithRestrictOption [region]
+|   |   |-> 3.55e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 3 multistage.hpp::40::Step [region]
+|   |   |   |-> 3.55e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 3 driver.cpp::148::Execute [region]
+|   |-> 2.90e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 4 boundary_communication.cpp::273::SetBounds [region]
+|       |-> 2.87e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 3 multistage.hpp::40::Step [region]
+|       |   |-> 2.87e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 3 driver.cpp::148::Execute [region]
+|-> 6.53e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 23433 update.hpp::271::EstimateTimestep [region]
+|   |-> 2.50e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 23200 multistage.hpp::40::Step [region]
+|       |-> 2.50e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 23200 driver.cpp::148::Execute [region]
+|-> 6.32e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 46400 invertor.cc::20::Recovery [region]
+|   |-> 6.32e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 6.32e-01 sec 0.4% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 5.85e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 electron_heating.cc::18::ApplyElectronHeating [region]
+|   |-> 5.85e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 5.85e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 4.66e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 201 boundary_communication.cpp::424::ProlongateInternalBounds [region]
+|   |-> 4.64e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|   |   |-> 4.64e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 4.52e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 primitive_fixer.cc::19::FixPrimitive [region]
+|   |-> 4.52e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 4.52e-01 sec 0.3% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 3.74e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 46400 recovery_fixer.cc::16::FixRecovery [region]
+|   |-> 3.74e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 46400 multistage.hpp::40::Step [region]
+|       |-> 3.74e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 46400 driver.cpp::148::Execute [region]
+|-> 3.67e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 1 mesh.cpp::717::Initialize [region]
+|-> 3.31e-01 sec 0.2% 100.0% 0.0% ------ 232 problem_generator.cpp::180::ProblemGenerator [for]
+|   |-> 3.31e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 232 mesh.cpp::717::Initialize [region]
+|-> 3.13e-01 sec 0.2% 100.0% 0.0% ------ 696 Kokkos::View::initialization [connection] via memset [for]
+|   |-> 3.01e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 464 multistage.hpp::40::Step [region]
+|   |   |-> 3.01e-01 sec 0.2% 100.0% 0.0% 0.0% 0.00e+00 464 driver.cpp::148::Execute [region]
+|-> 2.68e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 29 genXDMF [region]
+|   |-> 2.68e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 29 PHDF5::WriteOutputFileRealPrec [region]
+|       |-> 2.68e-01 sec 0.2% 0.0% 0.0% 0.0% 0.00e+00 29 outputs.cpp::430::MakeOutputs [region]
+|           |-> 2.49e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 27 driver.cpp::148::Execute [region]
+|-> 2.67e-01 sec 0.2% 100.0% 0.0% ------ 696 Kokkos::View::initialization [contravariant_metric] via memset [for]
+|   |-> 2.56e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 464 multistage.hpp::40::Step [region]
+|   |   |-> 2.56e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 464 driver.cpp::148::Execute [region]
+|-> 2.58e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 201 boundary_communication.cpp::384::ProlongateBounds [region]
+|   |-> 2.57e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 200 multistage.hpp::40::Step [region]
+|   |   |-> 2.57e-01 sec 0.1% 0.0% 0.0% 0.0% 0.00e+00 200 driver.cpp::148::Execute [region]
+|-> 2.29e-01 sec 0.1% 100.0% 0.0% ------ 3016 Kokkos::View::initialization [MakePack::allocated] via memset [for]
+|-> 1.94e-01 sec 0.1% 100.0% 0.0% ------ 696 Kokkos::View::initialization [covariant_metric] via memset [for]
+|   |-> 1.82e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 464 multistage.hpp::40::Step [region]
+|   |   |-> 1.82e-01 sec 0.1% 100.0% 0.0% 0.0% 0.00e+00 464 driver.cpp::148::Execute [region]
+|-> 1.92e-01 sec 0.1% 100.0% 0.0% ------ 2088 Kokkos::View::initialization [MakePack::cv] [for]
+
+KOKKOS HOST SPACE:
+===================
+MAX MEMORY ALLOCATED: 267853.4 kB
+ALLOCATIONS AT TIME OF HIGH WATER MARK:
+  16.7% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/prores_info_mirror
+  16.7% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info_mirror
+  16.7% mesh.cpp::717::Initialize/boundary_communication.cpp::273::SetBounds/prores_info_mirror
+  16.7% mesh.cpp::717::Initialize/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info_mirror
+  8.0% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/bnd_info_mirror
+  8.0% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/bnd_info_mirror
+  8.0% mesh.cpp::717::Initialize/boundary_communication.cpp::273::SetBounds/bnd_info_mirror
+  8.0% mesh.cpp::717::Initialize/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/bnd_info_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/prores_info_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/prores_info_mirror
+  0.1% mesh.cpp::717::Initialize/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/buffer_subsets_mirror
+  0.1% mesh.cpp::717::Initialize/boundary_communication.cpp::273::SetBounds/buffer_subsets_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/buffer_subsets_mirror
+  0.1% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/buffer_subsets_mirror
+
+KOKKOS CUDA SPACE:
+===================
+MAX MEMORY ALLOCATED: 10975017.9 kB
+ALLOCATIONS AT TIME OF HIGH WATER MARK:
+  1.7% mesh.cpp::717::Initialize/build_boundary_buffers.cpp::163::BuildBoundaryBuffers/pool buffer of size 3969 x 6048
+  0.8% mesh.cpp::717::Initialize/build_boundary_buffers.cpp::163::BuildBoundaryBuffers/pool buffer of size 39690 x 288
+  0.6% mesh.cpp::717::Initialize/build_boundary_buffers.cpp::163::BuildBoundaryBuffers/pool buffer of size 1323 x 6048
+  0.4% mesh.cpp::717::Initialize/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info
+  0.4% mesh.cpp::717::Initialize/boundary_communication.cpp::273::SetBounds/prores_info
+  0.4% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/prores_info
+  0.4% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/prores_info
+  0.3% mesh.cpp::717::Initialize/build_boundary_buffers.cpp::163::BuildBoundaryBuffers/pool buffer of size 567 x 8352
+  0.2% mesh.cpp::717::Initialize/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/bnd_info
+  0.2% mesh.cpp::717::Initialize/boundary_communication.cpp::273::SetBounds/bnd_info
+  0.2% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::53::SendBoundBufsWithRestrictOption/bnd_info
+  0.2% driver.cpp::148::Execute/multistage.hpp::40::Step/boundary_communication.cpp::273::SetBounds/bnd_info
+  0.1% mesh.cpp::717::Initialize/build_boundary_buffers.cpp::163::BuildBoundaryBuffers/pool buffer of size 189 x 8352
+
+KOKKOS HIP SPACE:
+===================
+MAX MEMORY ALLOCATED: 0.0 kB
+ALLOCATIONS AT TIME OF HIGH WATER MARK:
+
+KOKKOS SYCL SPACE:
+===================
+MAX MEMORY ALLOCATED: 0.0 kB
+ALLOCATIONS AT TIME OF HIGH WATER MARK:
+
+KOKKOS OpenMPTarget SPACE:
+===================
+MAX MEMORY ALLOCATED: 0.0 kB
+ALLOCATIONS AT TIME OF HIGH WATER MARK:
+
+Host process high water mark memory consumption: 652192 kB
+
+END KOKKOS PROFILING REPORT.

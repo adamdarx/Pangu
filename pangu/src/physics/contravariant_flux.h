@@ -4,7 +4,7 @@
 #ifndef PANGU_SRC_PHYSICS_CONTRAVARIANTFLUX_H
 #define PANGU_SRC_PHYSICS_CONTRAVARIANTFLUX_H
 
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 #include "initialization/variable_mnemonics.h"
 #include "physics/energy_momentum_tensor.h"
 #include "physics/state_calculation.h"

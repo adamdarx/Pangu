@@ -124,7 +124,7 @@ bash ./scripts/shell/make.sh
 常用 GPU/GRMHD 构建示例：
 
 ```bash
-PROBLEM=fm_torus BUILD_DIR=build bash ./scripts/shell/make.sh
+PROBLEM=fm_torus_mks BUILD_DIR=build bash ./scripts/shell/make.sh
 ```
 
 Minkowski 度规测试问题构建示例：
@@ -136,9 +136,9 @@ PROBLEM=orszag_tang_vortex BUILD_DIR=build bash ./scripts/shell/make.sh cpu
 如果需要固定 Kokkos 的 GPU 架构，请设置 `DEVICE_ARCH`。脚本会自动展开为 `-DKokkos_ARCH_<ARCH>=ON`；例如：
 
 ```bash
-DEVICE_ARCH=AMPERE80 PROBLEM=fm_torus BUILD_DIR=build bash ./scripts/shell/make.sh
-DEVICE_ARCH=AMD_GFX90A PROBLEM=fm_torus BUILD_DIR=build bash ./scripts/shell/make.sh
-DEVICE_ARCH=INTEL_PVC PROBLEM=fm_torus BUILD_DIR=build bash ./scripts/shell/make.sh
+DEVICE_ARCH=AMPERE80 PROBLEM=fm_torus_mks BUILD_DIR=build bash ./scripts/shell/make.sh
+DEVICE_ARCH=AMD_GFX90A PROBLEM=fm_torus_mks BUILD_DIR=build bash ./scripts/shell/make.sh
+DEVICE_ARCH=INTEL_PVC PROBLEM=fm_torus_mks BUILD_DIR=build bash ./scripts/shell/make.sh
 ```
 
 `DEVICE_ARCH` 一次只建议填一个值；Kokkos 官方配置页也说明了单个 device backend 只能配一个 architecture。若不设置，CUDA 构建会尝试自动探测。
@@ -219,7 +219,7 @@ bash ./scripts/shell/run.sh
 示例：
 
 ```bash
-BUILD_DIR=build ENABLE_CUDA=OFF PROBLEM=fm_torus bash ./scripts/shell/run.sh -n 1
+BUILD_DIR=build ENABLE_CUDA=OFF PROBLEM=fm_torus_mks bash ./scripts/shell/run.sh -n 1
 ```
 
 常用参数：
@@ -245,7 +245,7 @@ Pangu 使用 Parthenon 风格输入文件。典型结构如下：
 
 ```ini
 <parthenon/job>
-problem_id = fm_torus
+problem_id = fm_torus_mks
 
 <parthenon/mesh>
 nx1 = 512
@@ -276,7 +276,7 @@ ratio_max = 1000.0
 h = 0.7
 a = 0.9375
 
-<fm_torus>
+<fm_torus_mks>
 rin = 6.0
 rmax = 12.0
 ```
@@ -357,13 +357,13 @@ bash ./scripts/shell/analyze.sh
 密度或其它字段的 x-z 图：
 
 ```bash
-bash ./scripts/shell/analyze.sh -p fm_torus -f density --xzplot
+bash ./scripts/shell/analyze.sh -p fm_torus_mks -f density --xzplot
 ```
 
 双温温度图：
 
 ```bash
-bash ./scripts/shell/analyze.sh -p fm_torus --2t -w 4
+bash ./scripts/shell/analyze.sh -p fm_torus_mks --2t -w 4
 ```
 
 对应 Python 脚本为：
@@ -407,8 +407,8 @@ m_p c^2 / k_B = 1.0888194058954387e13 K
 ```bash
 python3 scripts/python/xz_temperature_plot.py \
   --temperature-unit-k 1.0888194058954387e13 \
-  --output-directory pic/fm_torus/xztemp \
-  data/fm_torus/*.phdf
+  --output-directory pic/fm_torus_mks/xztemp \
+  data/fm_torus_mks/*.phdf
 ```
 
 脚本中的温度定义与加热模型一致：
@@ -432,7 +432,7 @@ u = K_tot rho^gamma / (gamma - 1)
 | `orszag_tang_vortex` | Minkowski 度规下的 Orszag-Tang vortex | GRMHD |
 | `kelvin_helmholtz` | Minkowski 度规下的 Kelvin-Helmholtz instability | GRMHD |
 | `bondi_flow` | GR Bondi accretion | GRMHD |
-| `fm_torus` | Kerr spacetime 下的 Fishbone-Moncrief torus | GRMHD |
+| `fm_torus_mks` | Kerr spacetime 下的 Fishbone-Moncrief torus | GRMHD |
 
 新增算例时至少需要：
 
@@ -465,7 +465,7 @@ PROBLEM=<name> bash ./scripts/shell/make.sh
 | `pangu/src/recovery/invertor.cc` | 新的 conservative-to-primitive (C2P) 恢复 |
 | `pangu/src/riemann_solver/electron_heating.cc` | 每步电子加热更新 |
 | `pangu/src/fixer/primitive_fixer.cc` | primitive floor 与电子熵限制 |
-| `pangu/problem/fm_torus/problem_generator.cpp` | FM torus 初始化 |
+| `pangu/problem/fm_torus_mks/problem_generator.cpp` | FM torus 初始化 |
 
 开发双温功能时应特别注意：
 

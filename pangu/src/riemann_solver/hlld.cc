@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 #include "initialization/variable_mnemonics.h"
 #include "interpolation/interpolater_mc.h"
 #include "metric/tetrad.h"

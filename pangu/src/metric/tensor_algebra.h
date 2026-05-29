@@ -6,7 +6,7 @@
 
 #include <Kokkos_Core.hpp>
 
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 
 KOKKOS_INLINE_FUNCTION
 parthenon::Real dot4(const parthenon::Real row_vec[4],

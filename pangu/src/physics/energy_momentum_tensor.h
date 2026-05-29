@@ -3,7 +3,7 @@
 
 #ifndef PANGU_SRC_PHYSICS_ENERGYMOMENTUMTENSOR_H
 #define PANGU_SRC_PHYSICS_ENERGYMOMENTUMTENSOR_H
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 #include "initialization/variable_mnemonics.h"
 #include "metric/tensor_algebra.h"
 #include "physics/state_calculation.h"

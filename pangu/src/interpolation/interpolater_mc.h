@@ -3,7 +3,7 @@
 
 #ifndef PANGU_SRC_INTERPOLATION_INTERPOLATERMC_H
 #define PANGU_SRC_INTERPOLATION_INTERPOLATERMC_H
-#include "basic_types.hpp"
+#include <basic_types.hpp>
 
 KOKKOS_INLINE_FUNCTION
 parthenon::Real InterpolateMC(const parthenon::Real left,

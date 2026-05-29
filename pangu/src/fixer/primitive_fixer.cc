@@ -56,8 +56,11 @@ parthenon::TaskStatus FixPrimitive(
         const Real sigma_max_safe = Kokkos::max(sigma_max, small);
         const Real rho_before_floor = Kokkos::max(primitive(RHO, k, j, i), small);
 
-        const auto x1 = coords.Xc<X1DIR>(i);
-        const auto r = Kokkos::max(Kokkos::exp(x1), 1.0e-20);
+        const auto x = coords.Xc<X1DIR>(i);
+        const auto y = coords.Xc<X2DIR>(j);
+        const auto z = coords.Xc<X3DIR>(k);
+        // const auto r = Kokkos::max(Kokkos::exp(x1), 1.0e-20);
+        const auto r = Kokkos::sqrt(x * x + y * y + z * z);
 
         Real rho_floor = density_floor * Kokkos::pow(r, density_floor_pow);
         const Real eng_floor = energy_floor * Kokkos::pow(r, energy_floor_pow);
@@ -91,6 +94,10 @@ parthenon::TaskStatus FixPrimitive(
           primitive(RHO, k, j, i) = rho_floor;
         if (primitive(ENY, k, j, i) < eng_floor)
           primitive(ENY, k, j, i) = eng_floor;
+        if(r < 1.6) 
+          for(int index = 0; index < NPRIM; ++index) {
+            primitive(index, k, j, i) = 1e-10;
+          }
 
         const Real u1 = primitive(UX1, k, j, i);
         const Real u2 = primitive(UX2, k, j, i);

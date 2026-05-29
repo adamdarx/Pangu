@@ -188,12 +188,10 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         const Real x3 = coords.Xc<X3DIR>(k);
 
         const Real x_code[4] = {0.0, x1, x2, x3};
-        Real y[4];
-        CKS::CalculatePhysicalCoordinates(x_code, y);
-        const Real x = y[1];
-        const Real yy = y[2];
-        const Real z = y[3];
-        const Real rho_xy = Kokkos::sqrt(x * x + yy * yy);
+        const Real x = x_code[1];
+        const Real y = x_code[2];
+        const Real z = x_code[3];
+        const Real rho_xy = Kokkos::sqrt(x * x + y * y);
         const Real r = Kokkos::sqrt(rho_xy * rho_xy + z * z);
         const Real th = Kokkos::atan2(rho_xy, z);
         const Real sth = Kokkos::sin(th);
@@ -388,8 +386,6 @@ void MeshPostInitialization(parthenon::Mesh *pmesh,
                             parthenon::ParameterInput *pin,
                             parthenon::MeshData<Real> *md) {
   using namespace parthenon;
-
-  (void)md;
 
   const auto package_core = pmesh->packages.Get("core");
   const Real kAdiabaticIndex = package_core->Param<Real>("adiabatic_index");
@@ -607,7 +603,7 @@ void MeshPostInitialization(parthenon::Mesh *pmesh,
           primitive(BX3, k, j, i) *= magnetic_norm;
         });
   }
-
+  
   if (Globals::my_rank == 0) {
     printf("Maximum initial magnetic bsq: %e\n", global_bsq_max);
     printf("Target beta: %e, beta_min: %e, magnetic normalization: %e\n",

@@ -10,7 +10,6 @@
 
 #include "initialization/variable_mnemonics.h"
 #include "initialization/timestep_estimation.h"
-#include "mesh/refinement_criteria.h"
 #include "physics/heating_model.h"
 
 namespace core {
@@ -89,9 +88,6 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
   package_core->AddField(std::string("electron_entropy"), m);
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
-  package_core->AddField(std::string("q_factor"), m);
-  m = parthenon::Metadata(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost,
        parthenon::Metadata::Vector},
       std::vector<int>({3}));
@@ -118,7 +114,6 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost});
   package_core->AddField(std::string("flag"), m);
 
-  package_core->CheckRefinementBlock = CheckRefinement;
   package_core->EstimateTimestepBlock = EstimateTimestepBlock;
   return package_core;
 }
@@ -135,22 +130,22 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
 
   parthenon::Metadata m;
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost},
+      {parthenon::Metadata::Cell},
       std::vector<int>({4, 4, 4}));
   package_metric->AddField(std::string("covariant_metric"), m);
 
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost},
+      {parthenon::Metadata::Cell},
       std::vector<int>({4, 4, 4}));
   package_metric->AddField(std::string("contravariant_metric"), m);
 
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost},
+      {parthenon::Metadata::Cell},
       std::vector<int>({4}));
   package_metric->AddField(std::string("metric_determinant"), m);
 
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost},
+      {parthenon::Metadata::Cell},
       std::vector<int>({4, 4, 4}));
   package_metric->AddField(std::string("connection"), m);
 
