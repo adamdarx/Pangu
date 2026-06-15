@@ -7,8 +7,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Repairs cells where primitive recovery failed in the previous stage.
-parthenon::TaskStatus FixRecovery(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource);
+// Repairs cells where primitive recovery failed in the previous stage,
+// across all blocks in the partition.
+parthenon::TaskStatus FixRecovery(parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_FIXER_RECOVERYFIXER_H

@@ -30,8 +30,8 @@ nx3 = 16
 <parthenon/time>
 dt_factor = 1.3
 dt_init = 1e-5
-nlim = 100
-tlim = 2e6
+nlim = -1
+tlim = 200
 integrator = rk2
 ncycle_out_mesh = -10000
 
@@ -75,7 +75,7 @@ aphi_rho_cut = 0.2
 <parthenon/output0>
 file_type = hdf5
 write_xdmf = true
-dt = 0.1
+dt = 1
 variables = density, entropy, electron_entropy
 
 <parthenon/static_refinement1>

@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Yuehang Li.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -35,13 +34,14 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
 
   auto partitions = pmesh->GetDefaultBlockPartitions();
   int num_partitions = partitions.size();
-  TaskRegion &single_tasklist_per_pack_region2 = tc.AddRegion(num_partitions);
+
+  // Region 0: Start asynchronous MPI receives (overlaps with physics below).
+  TaskRegion &mpi_region = tc.AddRegion(num_partitions);
   for (int i = 0; i < num_partitions; i++) {
-    auto &tl = single_tasklist_per_pack_region2[i];
+    auto &tl = mpi_region[i];
     auto &mbase = pmesh->mesh_data.Add("base", partitions[i]);
     auto &mc0 = pmesh->mesh_data.Add(stage_name[stage - 1], mbase);
     auto &mc1 = pmesh->mesh_data.Add(stage_name[stage], mbase);
-    auto &mdudt = pmesh->mesh_data.Add("dUdt", mbase);
 
     const auto any = parthenon::BoundaryType::any;
 
@@ -49,88 +49,66 @@ TaskCollection Simulator::MakeTaskCollection(BlockList_t &blocks,
     tl.AddTask(none, parthenon::StartReceiveFluxCorrections, mc0);
   }
 
-  auto num_task_lists_executed_independently = blocks.size();
-  TaskRegion &async_region1 =
-      tc.AddRegion(num_task_lists_executed_independently);
-
-  assert(blocks.size() == async_region1.size());
-  for (int i = 0; i < blocks.size(); i++) {
-    auto &pmb = blocks[i];
-    auto &tl = async_region1[i];
-
-    auto &geom_sc = pmb->meshblock_data.Get(stage_name[0]);
-    auto &sc0 = pmb->meshblock_data.Get(stage_name[stage - 1]);
-    auto &dudt = pmb->meshblock_data.Get("dUdt");
-
-    auto &sc1 = pmb->meshblock_data.Get(stage_name[stage]);
-    auto fix_prim = tl.AddTask(none, FixPrimitive, sc0, geom_sc);
-    auto calc_cons =
-        tl.AddTask(fix_prim, CalculateConservative, sc0, geom_sc);
-    auto calc_flux = tl.AddTask(calc_cons, CalculateFluxes, sc0, geom_sc);
-    auto ct_task = tl.AddTask(calc_flux, ConstraintedTransport, sc0);
-  }
-
-  TaskRegion &single_tasklist_per_pack_region = tc.AddRegion(num_partitions);
+  // Region 1: All physics operations on a single partition-level task list
+  // (MeshData + MeshBlockPack fused across blocks).
+  TaskRegion &physics_region = tc.AddRegion(num_partitions);
   for (int i = 0; i < num_partitions; i++) {
-    auto &tl = single_tasklist_per_pack_region[i];
+    auto &tl = physics_region[i];
     auto &mbase = pmesh->mesh_data.Add("base", partitions[i]);
     auto &mc_init = pmesh->mesh_data.Add(stage_name[0], mbase);
     auto &mc0 = pmesh->mesh_data.Add(stage_name[stage - 1], mbase);
     auto &mc1 = pmesh->mesh_data.Add(stage_name[stage], mbase);
     auto &mdudt = pmesh->mesh_data.Add("dUdt", mbase);
 
-    auto set_flx =
-        parthenon::AddFluxCorrectionTasks(none, tl, mc0, pmesh->multilevel);
+    // ---- Flux computation (on mc0) ----
+    auto fix_prim = tl.AddTask(none, FixPrimitive, mc0.get());
+    auto calc_cons =
+        tl.AddTask(fix_prim, CalculateConservative, mc0.get());
+    auto calc_flux = tl.AddTask(calc_cons, CalculateFluxes, mc0.get());
+    auto ct_task =
+        tl.AddTask(calc_flux, ConstraintedTransport, mc0.get());
+
+    // ---- Flux divergence + RK update (mc0 → mdudt → mc1) ----
+    auto set_flx = parthenon::AddFluxCorrectionTasks(
+        ct_task, tl, mc0, pmesh->multilevel);
     auto flux_div = tl.AddTask(set_flx, FluxDivergence<MeshData<Real>>,
                                mc0.get(), mdudt.get());
     auto update = tl.AddTask(flux_div, UpdateIndependentData<MeshData<Real>>,
                              mc_init.get(), mdudt.get(), beta * dt, mc1.get());
 
     parthenon::AddBoundaryExchangeTasks(update, tl, mc1, pmesh->multilevel);
-  }
 
-  TaskRegion &async_region2 =
-      tc.AddRegion(num_task_lists_executed_independently);
-  assert(blocks.size() == async_region2.size());
-
-  for (int i = 0; i < blocks.size(); i++) {
-    auto &pmb = blocks[i];
-    auto &tl = async_region2[i];
-
-    auto &geom_sc = pmb->meshblock_data.Get(stage_name[0]);
-    auto &sc1 = pmb->meshblock_data.Get(stage_name[stage]);
-
+    // ---- Source + recovery (on mc1) ----
     auto source_task =
-        tl.AddTask(none, AddGeometricSource, sc1, beta * dt, geom_sc);
-    auto recover_task = tl.AddTask(source_task, Recovery, sc1, geom_sc);
-    auto electron_heat = tl.AddTask(recover_task, ApplyElectronHeating, sc1, geom_sc);
-    auto fix_rec = tl.AddTask(electron_heat, FixRecovery, sc1);
+        tl.AddTask(update, AddGeometricSource, mc1.get(), beta * dt);
+    auto recover_task = tl.AddTask(source_task, Recovery, mc1.get());
+    auto electron_heat =
+        tl.AddTask(recover_task, ApplyElectronHeating, mc1.get());
+    auto fix_rec = tl.AddTask(electron_heat, FixRecovery, mc1.get());
   }
 
-  TaskRegion &async_region3 =
-      tc.AddRegion(num_task_lists_executed_independently);
-  assert(blocks.size() == async_region3.size());
-  
-  for (int i = 0; i < blocks.size(); i++) {
-    auto &pmb = blocks[i];
-    auto &tl = async_region3[i];
-    auto &sc1 = pmb->meshblock_data.Get(stage_name[stage]);
+  // Region 2: Boundary conditions, fill derived, timestep estimation.
+  TaskRegion &post_region = tc.AddRegion(num_partitions);
+  for (int i = 0; i < num_partitions; i++) {
+    auto &tl = post_region[i];
+    auto &mbase = pmesh->mesh_data.Add("base", partitions[i]);
+    auto &mc1 = pmesh->mesh_data.Add(stage_name[stage], mbase);
 
-    auto set_bc = tl.AddTask(none, parthenon::ApplyBoundaryConditions, sc1);
-    auto fill_derived_op =
-      parthenon::Update::FillDerived<MeshBlockData<Real>>;
+    auto set_bc =
+        tl.AddTask(none, parthenon::ApplyBoundaryConditionsMD, mc1);
     auto fill_derived = tl.AddTask(
-      set_bc, fill_derived_op, sc1.get());
+        set_bc, parthenon::Update::FillDerived<MeshData<Real>>, mc1.get());
     if (stage == integrator->nstages) {
       auto new_dt = tl.AddTask(
-          fill_derived, EstimateTimestep<MeshBlockData<Real>>, sc1.get());
+          fill_derived, EstimateTimestep<MeshData<Real>>, mc1.get());
       if (pmesh->adaptive) {
         auto tag_refine = tl.AddTask(
-            fill_derived, parthenon::Refinement::Tag<MeshBlockData<Real>>,
-            sc1.get());
+            fill_derived, parthenon::Refinement::Tag<MeshData<Real>>,
+            mc1.get());
       }
     }
   }
+
   return tc;
 }
 

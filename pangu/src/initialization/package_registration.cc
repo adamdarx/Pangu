@@ -93,7 +93,8 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
       std::vector<int>({3}));
   package_core->AddField(std::string("weighted_velocity"), m);
   m = parthenon::Metadata(
-      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost, parthenon::Metadata::OneCopy},
+      {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost,
+       parthenon::Metadata::OneCopy},
       std::vector<int>({3}));
   package_core->AddField(std::string("alfven"), m);
   m = parthenon::Metadata(
@@ -114,7 +115,7 @@ std::shared_ptr<parthenon::StateDescriptor> Initialize(
       {parthenon::Metadata::Cell, parthenon::Metadata::FillGhost, parthenon::Metadata::OneCopy});
   package_core->AddField(std::string("flag"), m);
 
-  package_core->EstimateTimestepBlock = EstimateTimestepBlock;
+  package_core->EstimateTimestepMesh = EstimateTimestepMesh;
   return package_core;
 }
 }  

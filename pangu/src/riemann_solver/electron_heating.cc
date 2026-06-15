@@ -3,7 +3,6 @@
 
 #include "riemann_solver/electron_heating.h"
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,13 +11,12 @@
 #include "physics/heating_model.h"
 
 parthenon::TaskStatus ApplyElectronHeating(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource) {
+    parthenon::MeshData<parthenon::Real> *md) {
   using namespace parthenon;
   PARTHENON_INSTRUMENT
 
-  const auto pmb = resource->GetBlockPointer();
-  const auto package_core = pmb->packages.Get("core");
+  auto pmb0 = md->GetBlockData(0)->GetBlockPointer();
+  const auto package_core = pmb0->packages.Get("core");
   const auto kModelName = package_core->Param<std::string>("model_name");
   const Parameters heating_model_params = {
       parseModel(kModelName),
@@ -31,55 +29,59 @@ parthenon::TaskStatus ApplyElectronHeating(
       package_core->Param<bool>("suppress_highb_heat"),
       package_core->Param<bool>("enforce_positive_dissipation")};
 
-  const auto bound_x1_interior =
-      pmb->cellbounds.GetBoundsI(IndexDomain::interior);
-  const auto bound_x2_interior =
-      pmb->cellbounds.GetBoundsJ(IndexDomain::interior);
-  const auto bound_x3_interior =
-      pmb->cellbounds.GetBoundsK(IndexDomain::interior);
+  const auto bound_x1_interior = md->GetBoundsI(IndexDomain::interior);
+  const auto bound_x2_interior = md->GetBoundsJ(IndexDomain::interior);
+  const auto bound_x3_interior = md->GetBoundsK(IndexDomain::interior);
+  auto block = IndexRange{0, md->NumBlocks() - 1};
 
   PackIndexMap primitiveIndexMap;
   const std::vector<std::string> primitive_tags = {
       "density", "energy", "weighted_velocity", "magnetic_field", "entropy",
       "electron_entropy"};
-  auto primitive = resource->PackVariables(primitive_tags, primitiveIndexMap);
+  auto primitive = md->PackVariables(primitive_tags, primitiveIndexMap);
 
-  auto covariant_metric = geom_resource->Get("covariant_metric").data;
-  auto contravariant_metric = geom_resource->Get("contravariant_metric").data;
+  auto covariant_metric =
+      md->PackVariables(std::vector<std::string>{"covariant_metric"});
+  auto contravariant_metric =
+      md->PackVariables(std::vector<std::string>{"contravariant_metric"});
 
   PackIndexMap conservativeIndexMap;
   const std::vector<std::string> conservative_tags = {"conservative"};
   const auto conservative =
-      resource->PackVariables(conservative_tags, conservativeIndexMap);
+      md->PackVariables(conservative_tags, conservativeIndexMap);
 
-  pmb->par_for(
-      PARTHENON_AUTO_LABEL, bound_x3_interior.s, bound_x3_interior.e,
+  pmb0->par_for(
+      PARTHENON_AUTO_LABEL, block.s, block.e,
+      bound_x3_interior.s, bound_x3_interior.e,
       bound_x2_interior.s, bound_x2_interior.e, bound_x1_interior.s,
-      bound_x1_interior.e, KOKKOS_LAMBDA(const int k, const int j, const int i) {
+      bound_x1_interior.e, KOKKOS_LAMBDA(const int b, const int k, const int j,
+                                          const int i) {
         Real gcov[4][4], gcon[4][4];
         for (int row = 0; row < 4; ++row) {
           for (int col = 0; col < 4; ++col) {
-            gcov[row][col] = covariant_metric(CENTER, col, row, k, j, i);
-            gcon[row][col] = contravariant_metric(CENTER, col, row, k, j, i);
+            gcov[row][col] =
+                covariant_metric(b, CENTER * 16 + col * 4 + row, k, j, i);
+            gcon[row][col] =
+                contravariant_metric(b, CENTER * 16 + col * 4 + row, k, j, i);
           }
         }
 
         Real primitive_array[NPRIM];
         for (int index = 0; index < NPRIM; ++index) {
-          primitive_array[index] = primitive(index, k, j, i);
+          primitive_array[index] = primitive(b, index, k, j, i);
         }
         State state;
         CalculateState(primitive_array, gcov, gcon, state);
 
-        const Real cons_rho = conservative(RHO, k, j, i);
+        const Real cons_rho = conservative(b, RHO, k, j, i);
         const CellState cell = {
-            primitive(RHO, k, j, i),
-            primitive(ENY, k, j, i),
+            primitive(b, RHO, k, j, i),
+            primitive(b, ENY, k, j, i),
             state.bsq,
-            conservative(ENT, k, j, i) / cons_rho,
-            primitive(ENT, k, j, i),
-            conservative(KEL, k, j, i) / cons_rho};
-        primitive(KEL, k, j, i) = apply(heating_model_params, cell);
+            conservative(b, ENT, k, j, i) / cons_rho,
+            primitive(b, ENT, k, j, i),
+            conservative(b, KEL, k, j, i) / cons_rho};
+        primitive(b, KEL, k, j, i) = apply(heating_model_params, cell);
       });
 
   return TaskStatus::complete;

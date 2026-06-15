@@ -7,9 +7,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Adds geometric source terms to the GRMHD conservative variables.
-parthenon::TaskStatus AddGeometricSource(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    parthenon::Real dt,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
+// Adds geometric source terms to the GRMHD conservative variables
+// across all blocks in the partition.
+parthenon::TaskStatus AddGeometricSource(parthenon::MeshData<parthenon::Real> *md,
+                                         parthenon::Real dt);
 #endif  // PANGU_SRC_RIEMANNSOLVER_SOURCETERM_H

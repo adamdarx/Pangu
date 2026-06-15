@@ -7,9 +7,9 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Builds GRMHD conservative variables from primitive and metric variables.
+// Builds GRMHD conservative variables from primitive and metric variables
+// across all blocks in the partition.
 parthenon::TaskStatus CalculateConservative(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
+    parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_RIEMANNSOLVER_CONSERVATIVE_H

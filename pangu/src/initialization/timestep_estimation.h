@@ -6,8 +6,8 @@
 
 #include <parthenon/package.hpp>
 
-// Estimates the next stable timestep for one mesh block.
-parthenon::Real EstimateTimestepBlock(
-    parthenon::MeshBlockData<parthenon::Real> *resource);
+// Estimates the next stable timestep across all blocks in a MeshData partition.
+parthenon::Real EstimateTimestepMesh(
+    parthenon::MeshData<parthenon::Real> *resource);
 
 #endif  // PANGU_SRC_INITIALIZATION_TIMESTEPESTIMATION_H

@@ -6,9 +6,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Recovers GRMHD primitive variables from conservative and metric variables.
-parthenon::TaskStatus Recovery(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
+// Recovers GRMHD primitive variables from conservative variables and metric
+// data across all blocks in the partition.
+parthenon::TaskStatus Recovery(parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_RECOVERY_INVERTOR_H

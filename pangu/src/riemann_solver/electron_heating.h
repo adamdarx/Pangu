@@ -7,9 +7,9 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Applies electron heating using advected and recovered entropy values.
+// Applies electron heating using advected and recovered entropy values
+// across all blocks in the partition.
 parthenon::TaskStatus ApplyElectronHeating(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &geom_resource);
+    parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_RIEMANNSOLVER_ELECTRONHEATING_H

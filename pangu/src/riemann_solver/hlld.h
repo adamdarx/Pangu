@@ -7,9 +7,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Computes GRMHD numerical fluxes with the HLLD solver.
-parthenon::TaskStatus CalculateHLLD(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
+// Computes GRMHD numerical fluxes with the HLLD solver
+// across all blocks in the partition.
+parthenon::TaskStatus CalculateHLLD(parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_RIEMANNSOLVER_HLLD_H

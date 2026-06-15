@@ -7,9 +7,8 @@
 #include <memory>
 #include <parthenon/package.hpp>
 
-// Computes GRMHD numerical fluxes with the Lax-Friedrichs solver.
-parthenon::TaskStatus CalculateLAXF(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource);
+// Computes GRMHD numerical fluxes with the Lax-Friedrichs solver
+// across all blocks in the partition.
+parthenon::TaskStatus CalculateLAXF(parthenon::MeshData<parthenon::Real> *md);
 
 #endif  // PANGU_SRC_RIEMANNSOLVER_LAXF_H

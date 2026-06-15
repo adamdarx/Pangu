@@ -3,7 +3,6 @@
 
 #include "riemann_solver/riemann_solver.h"
 
-#include <memory>
 #include <parthenon/package.hpp>
 #include <stdexcept>
 #include <string>
@@ -12,21 +11,19 @@
 #include "riemann_solver/hlld.h"
 #include "riemann_solver/laxf.h"
 
-parthenon::TaskStatus CalculateFluxes(
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &resource,
-    std::shared_ptr<parthenon::MeshBlockData<parthenon::Real>> &init_resource) {
-  const auto pmb = resource->GetBlockPointer();
-  const auto package_core = pmb->packages.Get("core");
+parthenon::TaskStatus CalculateFluxes(parthenon::MeshData<parthenon::Real> *md) {
+  auto pmb0 = md->GetBlockData(0)->GetBlockPointer();
+  const auto package_core = pmb0->packages.Get("core");
   const auto &solver_name = package_core->Param<std::string>("riemann_solver");
 
   if (solver_name == "laxf") {
-    return CalculateLAXF(resource, init_resource);
+    return CalculateLAXF(md);
   }
   if (solver_name == "hll") {
-    return CalculateHLL(resource, init_resource);
+    return CalculateHLL(md);
   }
   if (solver_name == "hlld") {
-    return CalculateHLLD(resource, init_resource);
+    return CalculateHLLD(md);
   }
 
   throw std::invalid_argument("Unknown Riemann solver: " + solver_name);
