@@ -11,6 +11,7 @@
 #include "parthenon/driver.hpp"
 #include "prolong_restrict/prolong_restrict.hpp"
 #include "task_list/task_list.h"
+#include "metric/tensor_algebra.h"
 
 void ProblemGenerator(parthenon::MeshBlock *pmb,
                       parthenon::ParameterInput *pin) {
@@ -41,20 +42,19 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
       KOKKOS_LAMBDA(const int k, const int j, const int i) {
         Real gcov[4][4];
         Real gcon[4][4];
+        
         for (int row = 0; row < 4; ++row) {
           for (int col = 0; col < 4; ++col) {
             gcov[row][col] = 0.0;
             gcon[row][col] = 0.0;
           }
         }
-        gcov[0][0] = -1.0;
-        gcov[1][1] = 1.0;
-        gcov[2][2] = 1.0;
+        gcov[0][0] = -4.0;
+        gcov[1][1] = 4.0;
+        gcov[2][2] = 9.0;
         gcov[3][3] = 1.0;
-        gcon[0][0] = -1.0;
-        gcon[1][1] = 1.0;
-        gcon[2][2] = 1.0;
-        gcon[3][3] = 1.0;
+        gcov[0][1] = gcov[1][0] = 0.4;
+        invert(gcov, gcon);
 
         for (int loc = 0; loc < 4; ++loc) {
           for (int row = 0; row < 4; ++row) {
@@ -63,7 +63,7 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
               contravariant_metric(loc, col, row, k, j, i) = gcon[row][col];
             }
           }
-          metric_determinant(loc, k, j, i) = -1.0;
+          metric_determinant(loc, k, j, i) = determinant(gcov);
         }
 
         for (int dir = 0; dir < 4; ++dir) {
@@ -90,5 +90,14 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
             (kAdiabaticIndex - 1.0) * primitive(ENY, k, j, i) *
             Kokkos::pow(primitive(RHO, k, j, i), -kAdiabaticIndex);
         primitive(KEL, k, j, i) = kFelInit * primitive(ENT, k, j, i);
+
+        primitive(BX1, k, j, i) /= 2.0;
+        primitive(BX2, k, j, i) /= 3.0;
       });
+}
+
+void MeshPostInitialization(parthenon::Mesh *pmesh,
+                            parthenon::ParameterInput *pin,
+                            parthenon::MeshData<Real> *md) {
+  using namespace parthenon;
 }

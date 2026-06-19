@@ -278,3 +278,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         primitive(KEL, k, j, i) = kFelInit * primitive(ENT, k, j, i);
       });
 }
+
+void MeshPostInitialization(parthenon::Mesh *pmesh,
+                            parthenon::ParameterInput *pin,
+                            parthenon::MeshData<Real> *md) {
+  using namespace parthenon;
+}

@@ -97,3 +97,9 @@ void ProblemGenerator(parthenon::MeshBlock *pmb,
         random_pool.free_state(generator);
       });
 }
+
+void MeshPostInitialization(parthenon::Mesh *pmesh,
+                            parthenon::ParameterInput *pin,
+                            parthenon::MeshData<Real> *md) {
+  using namespace parthenon;
+}
